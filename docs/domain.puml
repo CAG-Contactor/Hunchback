@@ -1,0 +1,20 @@
+@startuml
+
+class Gameboard
+class PlayerAvatar
+class Ghost
+class Obstacle
+class Berry
+class WaterContainer
+class Bobber
+class Player
+class DanceRug
+
+Gameboard --> PlayerAvatar
+Gameboard --> Ghost
+Gameboard --> Obstacle
+Gameboard --> Berry
+
+WaterContainer --> Bobber
+
+@enduml
