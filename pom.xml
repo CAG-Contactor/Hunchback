@@ -9,7 +9,8 @@
     <version>0.1-SNAPSHOT</version>
 
     <properties>
-            <camel.version>2.19.0</camel.version>
+            <camel.version>2.20.0</camel.version>
+            <hawtio.version>1.5.3</hawtio.version>
     </properties>
     <dependencies>
         <dependency>
@@ -31,6 +32,16 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-all</artifactId>
             <version>5.14.5</version>
+        </dependency>
+        <dependency>
+            <groupId>io.hawt</groupId>
+            <artifactId>hawtio-springboot</artifactId>
+            <version>${hawtio.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.hawt</groupId>
+            <artifactId>hawtio-core</artifactId>
+            <version>${hawtio.version}</version>
         </dependency>
         <!--Used for bean validation, use some else??-->
         <dependency>
