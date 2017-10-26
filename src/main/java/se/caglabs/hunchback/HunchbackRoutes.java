@@ -71,7 +71,7 @@ public class HunchbackRoutes extends RouteBuilder {
         from("jms:queue:position")
                 .log("From JMS:${body}");
 
-        from("timer:waterleak?period=5s")
+        from("timer:waterleak?period=6s")
                 .routeId("waterleak-timer")
                 .setBody(simple("10"))
                 .to("jms:queue:removeWater");
