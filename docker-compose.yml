@@ -1,0 +1,16 @@
+version: '3'
+services:
+  hunchback-backend:
+    build:
+      context: ./hunchback-backend
+      dockerfile: ./Dockerfile
+    ports:
+    - "7890:7890"
+  frontend:
+    build:
+      context: ./hunchback-frontend
+      dockerfile: ./Dockerfile
+    depends_on:
+    - hunchback-backend
+    ports:
+    - "8080:80"

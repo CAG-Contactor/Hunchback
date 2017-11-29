@@ -4,6 +4,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,18 @@ public class HunchbackRoutes extends RouteBuilder {
         CamelContext context = new DefaultCamelContext();
         context.addComponent("jms",
                 JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+
+        // setup Camel web-socket component on the port we have defined
+        WebsocketComponent wc = getContext().getComponent("websocket", WebsocketComponent.class);
+        wc.setPort(7890);
+        // we can serve static resources from the classpath: or file: system
+        wc.setStaticResources("classpath:.");
+
+        from("timer:foo?period=60000")
+            .streamCaching()
+            .to("http4://api.open-notify.org/iss-now.json")
+            .log("iss-data:${body}")
+            .to("websocket:camel-iss?sendToAll=true");
 
         from("restlet:http://0.0.0.0:8080/step?restletMethods=GET")
                 .routeId("step-rest")
