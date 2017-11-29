@@ -1,5 +1,6 @@
 package se.caglabs.hunchback;
 
+import io.hawt.springboot.EnableHawtio;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -10,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Time: 19:07
  */
 @SpringBootApplication
+@EnableHawtio
 public class HunchbackApplication {
     public static void main(String[] args) {
         SpringApplication.run(HunchbackApplication.class, args);
