@@ -1,4 +1,8 @@
-import { Component } from '@angular/core';
+import {
+  Component,
+  Inject
+} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -10,13 +14,17 @@ export class AppComponent {
   messages: string[] = [];
   private _ws: WebSocket;
 
-  ngOnInit(): void {
+  constructor(@Inject(DOCUMENT) private readonly document: Document) {
 
+  }
+
+  ngOnInit(): void {
+    const backendServer = this.document.location.href.split('/')[2].split(':')[0];
     if (!(<any>window).WebSocket) {
       alert("WebSocket not supported by this browser");
     }
 
-    this._ws = new WebSocket("ws://localhost:7890/camel-iss");
+    this._ws = new WebSocket(`ws://${backendServer}:7890/camel-iss`);
     this._ws.onmessage = (m) => this._onmessage(m);
     this._ws.onclose = (m) => this._onclose(m);
   }
