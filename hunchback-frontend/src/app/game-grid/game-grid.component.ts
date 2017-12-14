@@ -17,7 +17,9 @@ export class GameGridComponent implements OnInit {
 
   ngOnInit() {
     this.backendService.messageObservable()
-      .subscribe(m => this.updateGrid(m.position.x, m.position.y))
+      .subscribe(m => {
+        if (m.messageType === 'Position') this.updateGrid(m.position.x, m.position.y)
+      })
 
   }
 

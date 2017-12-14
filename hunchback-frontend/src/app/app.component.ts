@@ -45,7 +45,9 @@ export class AppComponent implements OnInit {
     this.backendService.startWebSocket();
 
     this.backendService.messageObservable()
-      .subscribe(m => this.position = [m.position.x, m.position.y])
+      .subscribe(m => {
+        if (m.messageType === 'Position') this.position = [m.position.x, m.position.y]
+      })
   }
 
 }
