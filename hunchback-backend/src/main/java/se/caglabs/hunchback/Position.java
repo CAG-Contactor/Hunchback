@@ -31,22 +31,68 @@ public class Position {
         int steps = 1;
         switch (direction){
             case "up":
-                position.setLocation(position.x, position.y + steps);
+                position.y = getNewY( position.y + steps);
+                position.setLocation(position.x, position.y);
                 break;
             case "down":
-                position.setLocation(position.x, position.y - steps);
+                position.y = getNewY( position.y - steps);
+                position.setLocation(position.x, position.y);
                 break;
             case "right":
-                position.setLocation(position.x + steps, position.y);
+                position.x = getNewX( position.x + steps);
+                position.setLocation(position.x, position.y);
                 break;
             case "left":
-                position.setLocation(position.x - steps, position.y);
+                position.x = getNewX( position.x - steps);
+                position.setLocation(position.x, position.y);
                 break;
         }
-        message.getHeaders().put("x",position.x);
-        message.getHeaders().put("y",position.y);
+        WsPosition wsPosition = new WsPosition(position);
+        message.setBody(wsPosition.toString());
         System.out.println("position = " + position);
     }
+     private int getNewY(int y){
+        if(y < minPosition.y){
+            return minPosition.y;
+        }
+        if(y > maxPosition.y){
+            return maxPosition.y;
+        }
+        return y;
+     }
 
+     private int getNewX(int x){
+        if(x < minPosition.x){
+            return minPosition.x;
+        }
+        if(x > maxPosition.x){
+            return maxPosition.x;
+        }
+        return x;
+     }
+
+     class WsPosition {
+
+        String messageType = "Position";
+
+        Point postion;
+
+         public WsPosition(Point postion) {
+             this.postion = postion;
+         }
+
+         @Override
+        public String toString() {
+            return "{" +
+                    "\"messageType\":" + messageType +
+                    "\"position\": {" +
+                    "\"x\":" + position.x +
+                    "\"y\":" + position.y +
+                    "}" +
+                    "}";
+        }
+
+
+     }
 
 }
