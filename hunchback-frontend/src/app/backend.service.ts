@@ -34,6 +34,7 @@ export class BackendService {
 
   _onmessage(m) {
     if (m.data) {
+      console.debug('onmessage:', m.data);
       this.messageSubject.next(JSON.parse(m.data));
     }
   }
