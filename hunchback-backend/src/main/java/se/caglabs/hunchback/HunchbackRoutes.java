@@ -43,25 +43,35 @@ public class HunchbackRoutes extends RouteBuilder {
 
         from("restlet:http://0.0.0.0:8080/step?restletMethods=GET")
                 .routeId("step-rest")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform().simple("1")
                 .to("jms:queue:step");
         from("restlet:http://0.0.0.0:8080/direction/left?restletMethods=GET")
                 .routeId("left-rest")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform()
                 .simple("left")
                 .to("jms:queue:direction");
         from("restlet:http://0.0.0.0:8080/direction/right?restletMethods=GET")
                 .routeId("right-rest")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform()
                 .simple("right")
                 .to("jms:queue:direction");
         from("restlet:http://0.0.0.0:8080/direction/up?restletMethods=GET")
                 .routeId("up-rest")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform()
                 .simple("up")
                 .to("jms:queue:direction");
         from("restlet:http://0.0.0.0:8080/direction/down?restletMethods=GET")
                 .routeId("down-rest")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform()
                 .constant("down")
                 .to("jms:queue:direction");
