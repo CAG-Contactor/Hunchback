@@ -41,40 +41,42 @@ public class HunchbackRoutes extends RouteBuilder {
             .log("iss-data:${body}")
             .to("websocket:camel-iss?sendToAll=true");
 
-        from("restlet:http://0.0.0.0:8080/step?restletMethods=GET")
-                .routeId("step-rest")
-                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
-                .setHeader("Access-Control-Allow-Origin", constant("*"))
-                .transform().simple("1")
-                .to("jms:queue:step");
         from("restlet:http://0.0.0.0:8080/direction/left?restletMethods=GET")
                 .routeId("left-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
                 .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform()
                 .simple("left")
-                .to("jms:queue:direction");
+                .to("jms:queue:direction")
+                .setBody(simple("100"))
+                .to("jms:queue:addWater");
         from("restlet:http://0.0.0.0:8080/direction/right?restletMethods=GET")
                 .routeId("right-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
                 .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform()
                 .simple("right")
-                .to("jms:queue:direction");
+                .to("jms:queue:direction")
+                .setBody(simple("100"))
+                .to("jms:queue:addWater");
         from("restlet:http://0.0.0.0:8080/direction/up?restletMethods=GET")
                 .routeId("up-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
                 .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform()
                 .simple("up")
-                .to("jms:queue:direction");
+                .to("jms:queue:direction")
+                .setBody(simple("100"))
+                .to("jms:queue:addWater");
         from("restlet:http://0.0.0.0:8080/direction/down?restletMethods=GET")
                 .routeId("down-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
                 .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .transform()
                 .constant("down")
-                .to("jms:queue:direction");
+                .to("jms:queue:direction")
+                .setBody(simple("100"))
+                .to("jms:queue:addWater");
 
         from("jms:queue:step")
                 .log("From JMS:${body}")
@@ -93,12 +95,14 @@ public class HunchbackRoutes extends RouteBuilder {
                 .routeId("add-water-queue")
                 .log("From JMS:${body}")
                 .bean(waterContainerBean, "addWater")
-                .log("water level:${headers.waterLevel}");
+                .log("water level:${headers.waterLevel}")
+                .to("websocket:hunchback?sendToAll=true");
         from("jms:queue:removeWater")
                 .routeId("remove-water-queue")
                 .log("From JMS removeWater:${body}")
                 .bean(waterContainerBean, "removeWater")
-                .log("water level:${headers.waterLevel}");
+                .log("water level:${headers.waterLevel}")
+                .to("websocket:hunchback?sendToAll=true");
         from("jms:queue:position")
                 .log("From JMS:${body}");
 
