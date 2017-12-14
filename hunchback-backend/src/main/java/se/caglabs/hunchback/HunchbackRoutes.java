@@ -17,6 +17,9 @@ public class HunchbackRoutes extends RouteBuilder {
     @Inject
     @Named("waterContainerBean")
     private Object waterContainerBean;
+    @Inject
+    @Named("positionBean")
+    private Object position;
 
     @Override
     public void configure() throws Exception {
@@ -52,23 +55,28 @@ public class HunchbackRoutes extends RouteBuilder {
                 .transform()
                 .simple("right")
                 .to("jms:queue:direction");
-        from("restlet:http://0.0.0.0:8080/direction/forward?restletMethods=GET")
-                .routeId("forward-rest")
+        from("restlet:http://0.0.0.0:8080/direction/up?restletMethods=GET")
+                .routeId("up-rest")
                 .transform()
-                .simple("forward")
+                .simple("up")
                 .to("jms:queue:direction");
-        from("restlet:http://0.0.0.0:8080/direction/back?restletMethods=GET")
-                .routeId("back-rest")
+        from("restlet:http://0.0.0.0:8080/direction/down?restletMethods=GET")
+                .routeId("down-rest")
                 .transform()
-                .simple("back")
+                .constant("down")
                 .to("jms:queue:direction");
 
         from("jms:queue:step")
                 .log("From JMS:${body}")
                 .setBody(simple("10000"))
-                .to("jms:queue:addWater");
+                .to("jms:queue:addWater")
+                .bean(position,"move");
+
         from("jms:queue:direction")
-                .log("From JMS:${body}");
+                .log("From JMS:${body}")
+                .bean(position,"setPosition").
+                .to("websocket:hunchback?sendToAll=true");
+
         from("jms:queue:pulseValue")
                 .log("From JMS:${body}");
         from("jms:queue:addWater")
