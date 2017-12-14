@@ -26,14 +26,6 @@ public class Position {
     private Point maxPosition = new Point(100,1000);
 
     @Handler
-    public void setDirection(@Body Message message, @Headers Map headers){
-        Directions dir = message.getBody(Directions.class);
-        System.out.println("dir = " + dir);
-//        direction = message.getBody(String.class);
-//        System.out.println("direction = " + direction);
-    }
-
-    @Handler
     public void move(@Body Message message, @Headers Map headers){
         String direction = message.getBody(String.class);
         int steps = 1;
