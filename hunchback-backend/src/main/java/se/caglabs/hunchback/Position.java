@@ -23,7 +23,7 @@ public class Position {
     private String direction = "up";
     private Point position = new Point(0,0);
     private Point minPosition = new Point(0,0);
-    private Point maxPosition = new Point(100,1000);
+    private Point maxPosition = new Point(50,50);
 
     @Handler
     public void move(@Body Message message, @Headers Map headers){
