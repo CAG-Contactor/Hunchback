@@ -1,0 +1,15 @@
+#game-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: baseline;
+  height: 500px;
+  width: 500px;
+}
+
+#game-grid .sprite {
+  box-sizing: border-box;
+
+  border: 1px solid #ccc;
+  width: 10%;
+  height: 10%;
+}

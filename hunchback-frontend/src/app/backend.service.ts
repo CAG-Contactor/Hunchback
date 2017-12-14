@@ -5,6 +5,8 @@ import {
 import { DOCUMENT } from "@angular/common";
 import { Subject } from "rxjs/Subject";
 import { ReplaySubject } from "rxjs/ReplaySubject";
+import { HttpClient } from "@angular/common/http";
+import "rxjs/add/operator/take";
 
 @Injectable()
 export class BackendService {
@@ -12,7 +14,7 @@ export class BackendService {
   private _ws: WebSocket;
   private backendServer: string;
 
-  constructor(@Inject(DOCUMENT) private readonly document: Document) {
+  constructor(@Inject(DOCUMENT) private readonly document: Document, private readonly httpClient: HttpClient) {
     this.backendServer = this.document.location.href.split('/')[2].split(':')[0];
   }
 
@@ -38,6 +40,26 @@ export class BackendService {
 
   _onclose(m) {
     this._ws = null;
+  }
+
+  sendUp() {
+    this.httpClient.get(`http://${this.backendServer}:8080/direction/up`)
+      .subscribe(r => console.debug(r), e => console.error(e));
+  }
+
+  sendLeft() {
+    this.httpClient.get(`http://${this.backendServer}:8080/direction/left`)
+      .subscribe(r => console.debug(r), e => console.error(e));
+  }
+
+  sendDown() {
+    this.httpClient.get(`http://${this.backendServer}:8080/direction/down`)
+      .subscribe(r => console.debug(r), e => console.error(e));
+  }
+
+  sendRight() {
+    this.httpClient.get(`http://${this.backendServer}:8080/direction/right`)
+      .subscribe(r => console.debug(r), e => console.error(e));
   }
 }
 
