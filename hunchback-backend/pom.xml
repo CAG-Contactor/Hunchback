@@ -5,13 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.cag.labs</groupId>
-    <artifactId>hunchback-backend</artifactId>
+    <artifactId>hunchback</artifactId>
     <version>0.1-SNAPSHOT</version>
 
     <properties>
             <camel.version>2.20.1</camel.version>
             <spring-boot-starter.version>1.5.7.RELEASE</spring-boot-starter.version>
             <hawtio.version>1.5.3</hawtio.version>
+            <java.version>1.8</java.version>
     </properties>
     <dependencies>
         <dependency>
@@ -23,6 +24,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot-starter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.18</version>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -78,6 +84,15 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
