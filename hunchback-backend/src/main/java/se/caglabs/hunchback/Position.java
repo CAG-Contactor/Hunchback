@@ -84,10 +84,10 @@ public class Position {
          @Override
         public String toString() {
             return "{" +
-                    "\"messageType\":" + messageType +
+                    "\"messageType\":\"" + messageType + "\"," +
                     "\"position\": {" +
                     "\"x\":" + position.x +
-                    "\"y\":" + position.y +
+                    ", \"y\":" + position.y +
                     "}" +
                     "}";
         }
