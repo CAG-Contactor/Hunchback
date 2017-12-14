@@ -34,7 +34,7 @@ export class BackendService {
 
   _onmessage(m) {
     if (m.data) {
-      this.messageSubject.next(m.data);
+      this.messageSubject.next(JSON.parse(m.data));
     }
   }
 
@@ -43,26 +43,27 @@ export class BackendService {
   }
 
   sendUp() {
-    this.httpClient.get(`http://${this.backendServer}:8080/direction/up`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:8080/direction/up`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendLeft() {
-    this.httpClient.get(`http://${this.backendServer}:8080/direction/left`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:8080/direction/left`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendDown() {
-    this.httpClient.get(`http://${this.backendServer}:8080/direction/down`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:8080/direction/down`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendRight() {
-    this.httpClient.get(`http://${this.backendServer}:8080/direction/right`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:8080/direction/right`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 }
 
 export interface Message {
-  type: string
+  messageType: string;
+  [propName: string]: any;
 }
