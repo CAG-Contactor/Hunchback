@@ -6,6 +6,7 @@ import { DOCUMENT } from "@angular/common";
 import { Subject } from "rxjs/Subject";
 import { ReplaySubject } from "rxjs/ReplaySubject";
 import { HttpClient } from "@angular/common/http";
+import "rxjs/add/operator/take";
 
 @Injectable()
 export class BackendService {
@@ -42,19 +43,23 @@ export class BackendService {
   }
 
   sendUp() {
-    this.httpClient.get(`http://${this.backendServer}:8080/direction/up`).toPromise().then(r => console.debug('up done'));
+    this.httpClient.get(`http://${this.backendServer}:8080/direction/up`)
+      .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendLeft() {
-    this.httpClient.get(`http://${this.backendServer}:8080/direction/left`).toPromise().then(r => console.debug('left done'));
+    this.httpClient.get(`http://${this.backendServer}:8080/direction/left`)
+      .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendDown() {
-    this.httpClient.get(`http://${this.backendServer}:8080/direction/down`).toPromise().then(r => console.debug('down done'));
+    this.httpClient.get(`http://${this.backendServer}:8080/direction/down`)
+      .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendRight() {
-    this.httpClient.get(`http://${this.backendServer}:8080/direction/right`).toPromise().then(r => console.debug('right done'));
+    this.httpClient.get(`http://${this.backendServer}:8080/direction/right`)
+      .subscribe(r => console.debug(r), e => console.error(e));
   }
 }
 

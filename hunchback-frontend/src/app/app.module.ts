@@ -5,11 +5,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { BackendService } from "./backend.service";
+import { GameGridComponent } from './game-grid/game-grid.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    GameGridComponent
   ],
   imports: [
     BrowserModule,
