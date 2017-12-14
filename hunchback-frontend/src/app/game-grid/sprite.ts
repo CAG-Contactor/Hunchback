@@ -1,3 +1,3 @@
 export class Sprite {
-  position: number;
+  constructor(public readonly code: string){}
 }
