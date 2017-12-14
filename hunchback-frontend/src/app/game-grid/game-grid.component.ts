@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {Sprite} from "./sprite";
 
 @Component({
   selector: 'app-game-grid',
@@ -7,7 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GameGridComponent implements OnInit {
 
-  constructor() { }
+  sprites : Sprite[];
+
+  constructor() {
+    this.sprites = GameGridComponent.mockGridContents();
+  }
+
+  static mockGridContents(): any {
+    let sprites = [];
+    for (let i = 0; i < 100; i++) {
+      let sprite = new Sprite();
+      sprite.position = i;
+      sprites.push(new Sprite());
+    }
+    return sprites;
+  }
 
   ngOnInit() {
   }
