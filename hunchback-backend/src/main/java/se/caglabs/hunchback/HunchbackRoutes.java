@@ -74,7 +74,7 @@ public class HunchbackRoutes extends RouteBuilder {
 
         from("jms:queue:direction")
                 .log("From JMS:${body}")
-                .bean(position,"setPosition").
+                .bean(position,"move")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:pulseValue")
