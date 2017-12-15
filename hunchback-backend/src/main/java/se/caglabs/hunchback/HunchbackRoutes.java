@@ -2,11 +2,16 @@ package se.caglabs.hunchback;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.stereotype.Component;
+import se.caglabs.hunchback.processors.IssPositionProcessor;
+import se.caglabs.hunchback.processors.PositionToPlaceProcessor;
+import se.caglabs.hunchback.processors.WeatherProcessor;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,6 +25,10 @@ public class HunchbackRoutes extends RouteBuilder {
     @Inject
     @Named("positionBean")
     private Object position;
+
+    private IssPositionProcessor issPositionProcessor = new IssPositionProcessor();
+    private PositionToPlaceProcessor positionToPlaceProcessor = new PositionToPlaceProcessor();
+    private WeatherProcessor weatherProcessor = new WeatherProcessor();
 
     @Override
     public void configure() throws Exception {
@@ -110,5 +119,20 @@ public class HunchbackRoutes extends RouteBuilder {
                 .routeId("waterleak-timer")
                 .setBody(simple("10"))
                 .to("jms:queue:removeWater");
+
+        from("timer:foo?period=15000")
+            .to("http4://api.open-notify.org/iss-now.json").streamCaching()
+            .log("rest headers: ${headers}")
+            .process(issPositionProcessor)
+            .log(LoggingLevel.INFO,"${header.latitude}")
+            .log(LoggingLevel.INFO,"${header.longitude}")
+            .recipientList(simple("https4://maps.googleapis.com/maps/api/geocode/json?latlng=${header.latitude},${header.longitude}&sensor=false"), "false")
+            .process(positionToPlaceProcessor)
+            .log(LoggingLevel.INFO, "${body}")
+            .log(LoggingLevel.INFO, "${headers}")
+            .recipientList(simple("https4://api.openweathermap.org/data/2.5/weather?lat=${header.latitude}&lon=${header.longitude}&appid=93e711f5c2bb6f3e6dfaffc3f431858c&units=metric"), "false")
+            .process(weatherProcessor)
+            .log(LoggingLevel.INFO, "${headers}");
+
     }
 }
