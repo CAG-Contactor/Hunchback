@@ -2,105 +2,13 @@
   Game-grid
 </h2>
 
+<h3>Sprite: {{ sprites.length }} Sprites</h3>
+
 <div id="game-grid">
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
-  <div class="sprite"></div>
+  <div *ngFor="let sprite of sprites" [ngClass]="{
+    'sprite' : true,
+    'position' : sprite.code === '*',
+    'wall' : sprite.code === '|'
+  }">
+  </div>
 </div>

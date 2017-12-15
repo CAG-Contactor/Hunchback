@@ -13,6 +13,7 @@ import { BackendService } from "./backend.service";
 export class AppComponent implements OnInit {
   title = 'app';
   messages: any[] = [];
+  position = [0,0]
 
   constructor(private readonly backendService: BackendService) {
 
@@ -44,7 +45,9 @@ export class AppComponent implements OnInit {
     this.backendService.startWebSocket();
 
     this.backendService.messageObservable()
-      .subscribe(m => this.messages.push(m))
+      .subscribe(m => {
+        if (m.messageType === 'Position') this.position = [m.position.x, m.position.y]
+      })
   }
 
 }

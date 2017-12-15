@@ -23,7 +23,7 @@ public class Position {
     private String direction = "up";
     private Point position = new Point(0,0);
     private Point minPosition = new Point(0,0);
-    private Point maxPosition = new Point(100,1000);
+    private Point maxPosition = new Point(19,19);
 
     @Handler
     public void move(@Body Message message, @Headers Map headers){
@@ -84,10 +84,10 @@ public class Position {
          @Override
         public String toString() {
             return "{" +
-                    "\"messageType\":" + messageType +
+                    "\"messageType\":\"" + messageType + "\"," +
                     "\"position\": {" +
                     "\"x\":" + position.x +
-                    "\"y\":" + position.y +
+                    ", \"y\":" + position.y +
                     "}" +
                     "}";
         }
