@@ -2,14 +2,24 @@
   display: flex;
   flex-wrap: wrap;
   align-content: baseline;
-  height: 500px;
-  width: 500px;
+  height: 600px;
+  width: 600px;
 }
 
 #game-grid .sprite {
   box-sizing: border-box;
+  background-size: contain;
 
   border: 1px solid #ccc;
   width: 5%;
   height: 5%;
+}
+
+.sprite.position {
+  background: url(/assets/svg/avatar_1.svg);
+}
+
+.sprite.wall {
+  background: url(/assets/svg/wall_1.svg);
+  background-color: brown;
 }
