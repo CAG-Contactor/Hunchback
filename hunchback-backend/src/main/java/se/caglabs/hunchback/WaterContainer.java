@@ -11,12 +11,13 @@ import java.util.Map;
 @Singleton
 @Named("waterContainerBean")
 public class WaterContainer {
-    private int level;
+    private int level = 1000;
 
     @Handler
     public void addWater(@Body Message message, @Headers Map headers){
         level += message.getBody(Integer.class);
         headers.put("waterLevel", level);
+        message.setBody(this.toString());
     }
 
     @Handler
@@ -24,5 +25,14 @@ public class WaterContainer {
         level -= message.getBody(Integer.class);
         level = level < 0 ? 0 : level;
         headers.put("waterLevel", level);
+        message.setBody(this.toString());
     }
+    @Override
+    public String toString() {
+        return "{" +
+                "\"messageType\":\"waterlevel\"," +
+                "\"level\": " + level +
+                "}";
+    }
+
 }
