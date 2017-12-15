@@ -44,22 +44,22 @@ export class BackendService {
   }
 
   sendUp() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:8080/direction/up`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:18080/direction/up`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendLeft() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:8080/direction/left`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:18080/direction/left`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendDown() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:8080/direction/down`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:18080/direction/down`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendRight() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:8080/direction/right`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:18080/direction/right`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 }

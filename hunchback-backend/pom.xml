@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.cag.labs</groupId>
-    <artifactId>hunchback</artifactId>
+    <artifactId>hunchback-backend</artifactId>
     <version>0.1-SNAPSHOT</version>
 
     <properties>
