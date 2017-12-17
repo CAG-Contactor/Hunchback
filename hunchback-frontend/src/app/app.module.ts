@@ -6,14 +6,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { BackendService } from "./backend.service";
 import { GameGridComponent } from './game-grid/game-grid.component';
-import { GameTrackComponent } from './game-track/game-track.component';
+import { GameSceneComponent } from './game-scene/game-scene.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     GameGridComponent,
-    GameTrackComponent
+    GameSceneComponent
   ],
   imports: [
     BrowserModule,
