@@ -16,7 +16,7 @@ public class WaterContainer {
     @Handler
     public void addWater(@Body Message message, @Headers Map headers){
         level += message.getBody(Integer.class);
-        headers.put("waterLevel", level);
+        headers.put("WaterLevel", level);
         message.setBody(this.toString());
     }
 
