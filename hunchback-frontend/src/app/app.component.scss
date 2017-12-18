@@ -1,0 +1,44 @@
+.box {
+  background-color: #eee;
+  color: #666;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.sidebar {
+  grid-area: sidebar;
+
+  color: #fff;
+  background-color: #646872;
+}
+
+.content {
+  grid-area: content;
+}
+
+.header {
+  grid-area: header;
+
+  color: #fff;
+  background-color: #556068;
+  outline: 1px dashed #98abb9;
+  outline-offset: -5px;
+}
+
+.wrapper {
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: 25%;
+  grid-template-areas:
+    "header header header header"
+    "content content content sidebar";
+  background-color: #fff;
+  color: #444;
+}
+
+h1, h2 {
+  margin: 0;
+  text-align: left;
+  font-family: Helvetica, sans-serif;
+  font-weight: bold;
+}

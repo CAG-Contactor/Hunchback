@@ -13,7 +13,7 @@ export class BackendService {
   private messageSubject: Subject<Message> = new ReplaySubject(1);
   private _ws: WebSocket;
   private backendServer: string;
-  private port: number = 18080;
+  private port: number = 8080;
 
   constructor(@Inject(DOCUMENT) private readonly document: Document, private readonly httpClient: HttpClient) {
     this.backendServer = this.document.location.href.split('/')[2].split(':')[0];
