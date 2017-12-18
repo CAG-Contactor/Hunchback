@@ -13,6 +13,7 @@ export class BackendService {
   private messageSubject: Subject<Message> = new ReplaySubject(1);
   private _ws: WebSocket;
   private backendServer: string;
+  private port: number = 18080;
 
   constructor(@Inject(DOCUMENT) private readonly document: Document, private readonly httpClient: HttpClient) {
     this.backendServer = this.document.location.href.split('/')[2].split(':')[0];
@@ -44,22 +45,22 @@ export class BackendService {
   }
 
   sendUp() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:18080/direction/up`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/up`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendLeft() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:18080/direction/left`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/left`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendDown() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:18080/direction/down`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/down`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendRight() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:18080/direction/right`)
+    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/right`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 }

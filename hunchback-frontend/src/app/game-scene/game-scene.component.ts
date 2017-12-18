@@ -45,6 +45,7 @@ export class GameSceneComponent implements OnInit, AfterViewInit, OnDestroy {
 
   updateView(x: number, y: number) {
     console.debug('updateView:', x, y);
+    this.scene.clear();
     // Update game state
     this.gubbe.moveTo(x, y);
     // Render

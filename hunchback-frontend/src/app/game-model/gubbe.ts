@@ -1,6 +1,6 @@
 import { Shape } from "./shape";
 import { Actor } from "./actor";
-import { Scene } from "./track";
+import { Scene } from "./scene";
 
 export class Gubbe implements Shape, Actor {
   private _x: number;

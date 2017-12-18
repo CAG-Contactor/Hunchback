@@ -99,7 +99,7 @@ public class Position {
                 - values.stream().filter(d -> d.equals("left")).count();
         long ySpeed = values.stream().filter(d -> d.equals("up")).count()
                 - values.stream().filter(d -> d.equals("down")).count();
-        System.out.println("speed (" + xSpeed + ", " + ySpeed + ")");
+//        System.out.println("speed (" + xSpeed + ", " + ySpeed + ")");
         return new Point((int) xSpeed, (int) ySpeed);
     }
 

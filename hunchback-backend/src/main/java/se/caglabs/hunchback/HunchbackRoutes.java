@@ -87,10 +87,10 @@ public class HunchbackRoutes extends RouteBuilder {
                 .setBody(simple("10"))
                 .to("jms:queue:addWater");
 
-        from("timer:position?period=500")
+        from("timer:position?period=100")
                 .bean(position,"getPosition")
-                .log("send pos:${body}")
-                .to("websocket:camel-iss?sendToAll=true");
+                //.log("send pos:${body}")
+                .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:step")
                 .log("From JMS:${body}")
