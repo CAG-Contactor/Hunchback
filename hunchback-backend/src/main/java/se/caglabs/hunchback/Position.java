@@ -1,5 +1,8 @@
 package se.caglabs.hunchback;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.camel.Body;
 import org.apache.camel.Handler;
 import org.apache.camel.Headers;
@@ -23,7 +26,8 @@ import java.util.TreeMap;
 @Singleton
 @Named("positionBean")
 public class Position {
-    private String direction = "up";
+    private static final int INERTIA_TIME_IN_SEC = 5;
+    private double stepFrequency;
     private Point position = new Point(0, 0);
     private Point minPosition = new Point(0, 0);
     private Point maxPosition = new Point(499, 499);
@@ -54,17 +58,17 @@ public class Position {
                 break;
         }
 //        WsPosition wsPosition = new WsPosition(position);
-//        message.setBody(wsPosition.toString());
+//        message.setBody(wsPosition.toJSON());
 //        System.out.println("position = " + position);
     }
 
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
-        Point inertiaPos = getInertiaPosition();
-        position.x = getNewX(position.x + inertiaPos.x);
-        position.y = getNewX(position.y + inertiaPos.y);
+        Point inertiaRelPos = getInertiaRelativePosition();
+        position.x = getNewX(position.x + inertiaRelPos.x);
+        position.y = getNewX(position.y + inertiaRelPos.y);
         WsPosition wsPosition = new WsPosition(position);
-        message.setBody(wsPosition.toString());
+        message.setBody(wsPosition.toJSON());
     }
 
     private int getNewY(int y) {
@@ -87,22 +91,21 @@ public class Position {
         return x;
     }
 
-    private Point getInertiaPosition(){
-        SortedMap<Long, String> validSteps = steps.tailMap(System.currentTimeMillis() - 5 * 1000);
-        System.out.println("longStringSortedMap = " + validSteps);
-        steps = validSteps;
+    private Point getInertiaRelativePosition() {
+        steps = steps.tailMap(System.currentTimeMillis() - INERTIA_TIME_IN_SEC * 1000);
+        stepFrequency = (double) steps.size() / INERTIA_TIME_IN_SEC;
         Collection<String> values = steps.values();
         long xSpeed = values.stream().filter(d -> d.equals("right")).count()
                 - values.stream().filter(d -> d.equals("left")).count();
         long ySpeed = values.stream().filter(d -> d.equals("up")).count()
                 - values.stream().filter(d -> d.equals("down")).count();
         System.out.println("speed (" + xSpeed + ", " + ySpeed + ")");
-        return new Point((int)xSpeed, (int)ySpeed);
+        return new Point((int) xSpeed, (int) ySpeed);
     }
 
     class WsPosition {
 
-        String messageType = "Position";
+        private static final String MESSAGE_TYPE = "Position";
 
         Point postion;
 
@@ -110,15 +113,24 @@ public class Position {
             this.postion = postion;
         }
 
-        @Override
-        public String toString() {
-            return "{" +
-                    "\"messageType\":\"" + messageType + "\"," +
-                    "\"position\": {" +
-                    "\"x\":" + position.x +
-                    ", \"y\":" + position.y +
-                    "}" +
-                    "}";
+        public String toJSON() {
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode rootNode = mapper.createObjectNode();
+            rootNode.put("messageType", MESSAGE_TYPE);
+//            rootNode.put("stepFrequency", stepFrequency);
+
+            ObjectNode positionNode = mapper.createObjectNode();
+            positionNode.put("x", postion.x);
+            positionNode.put("y", postion.y);
+
+            rootNode.set("position", positionNode);
+
+            try {
+                return mapper.writer().writeValueAsString(rootNode);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return "";
+            }
         }
 
 
