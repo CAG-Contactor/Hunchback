@@ -44,6 +44,11 @@ public class HunchbackRoutes extends RouteBuilder {
         // we can serve static resources from the classpath: or file: system
         wc.setStaticResources("classpath:.");
 
+        // MongoDb route example. Setup a database and try it. Read more here: http://camel.apache.org/mongodb.html
+//        from("direct:findById")
+//            .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
+//            .to("mock:resultFindById");
+
         from("timer:foo?period=60000")
             .streamCaching()
             .to("http4://api.open-notify.org/iss-now.json")
