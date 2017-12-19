@@ -6,12 +6,16 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { BackendService } from "./backend.service";
 import { GameGridComponent } from './game-grid/game-grid.component';
+import { GameSceneComponent } from './game-scene/game-scene.component';
+import { WaterIndicatorComponent } from './water-indicator/water-indicator.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    GameGridComponent
+    GameGridComponent,
+    GameSceneComponent,
+    WaterIndicatorComponent
   ],
   imports: [
     BrowserModule,

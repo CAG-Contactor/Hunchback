@@ -1,0 +1,11 @@
+<h2>Water Level</h2>
+<p>
+  Level: {{waterLevel}} | Capacity: {{waterCapacity}} | Full: {{isFull}}
+</p>
+
+<div id="water-container" [ngClass]="{'full' : isFull}">
+  <div id="glass">
+    <div id="water" [ngStyle]="{'top': 100-fillPercentage+'%'}"></div>
+    <span id="counter">{{fillPercentage}}%</span>
+  </div>
+</div>

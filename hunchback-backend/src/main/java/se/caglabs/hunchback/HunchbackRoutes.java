@@ -57,7 +57,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .transform()
                 .simple("left")
                 .to("jms:queue:direction")
-                .setBody(simple("100"))
+                .setBody(simple("10"))
                 .to("jms:queue:addWater");
         from("restlet:http://0.0.0.0:8080/direction/right?restletMethods=GET")
                 .routeId("right-rest")
@@ -66,7 +66,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .transform()
                 .simple("right")
                 .to("jms:queue:direction")
-                .setBody(simple("100"))
+                .setBody(simple("10"))
                 .to("jms:queue:addWater");
         from("restlet:http://0.0.0.0:8080/direction/up?restletMethods=GET")
                 .routeId("up-rest")
@@ -75,7 +75,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .transform()
                 .simple("up")
                 .to("jms:queue:direction")
-                .setBody(simple("100"))
+                .setBody(simple("10"))
                 .to("jms:queue:addWater");
         from("restlet:http://0.0.0.0:8080/direction/down?restletMethods=GET")
                 .routeId("down-rest")
@@ -84,8 +84,13 @@ public class HunchbackRoutes extends RouteBuilder {
                 .transform()
                 .constant("down")
                 .to("jms:queue:direction")
-                .setBody(simple("100"))
+                .setBody(simple("10"))
                 .to("jms:queue:addWater");
+
+        from("timer:position?period=100")
+                .bean(position,"getPosition")
+                //.log("send pos:${body}")
+                .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:step")
                 .log("From JMS:${body}")
@@ -95,23 +100,26 @@ public class HunchbackRoutes extends RouteBuilder {
 
         from("jms:queue:direction")
                 .log("From JMS:${body}")
-                .bean(position,"move")
-                .to("websocket:hunchback?sendToAll=true");
+                .bean(position,"move");
+//                .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:pulseValue")
                 .log("From JMS:${body}");
+
         from("jms:queue:addWater")
                 .routeId("add-water-queue")
                 .log("From JMS:${body}")
                 .bean(waterContainerBean, "addWater")
                 .log("water level:${headers.waterLevel}")
                 .to("websocket:hunchback?sendToAll=true");
+
         from("jms:queue:removeWater")
                 .routeId("remove-water-queue")
                 .log("From JMS removeWater:${body}")
                 .bean(waterContainerBean, "removeWater")
                 .log("water level:${headers.waterLevel}")
                 .to("websocket:hunchback?sendToAll=true");
+
         from("jms:queue:position")
                 .log("From JMS:${body}");
 
