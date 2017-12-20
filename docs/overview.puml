@@ -12,13 +12,15 @@ frame Camel {
     queue RemoveWaterQueue
     component MoveRoute
     component AddWaterRoute
-    component getPositionRoute
+    component updatePositionRoute
     component RemoveWaterRoute
     component WaterLeakRoute
     component getWind
+    component getMap
 }
 frame BackEnd{
     component calculatePosition
+    component mapHandler
 }
 
 Dansmatta --> RaspberryPi
@@ -27,22 +29,26 @@ DirectionRoutes --> DirectionQueue
 DirectionRoutes --> AddWaterQueue
 DirectionQueue --> MoveRoute
 AddWaterQueue --> AddWaterRoute
-AddWaterRoute --> GUI
+AddWaterRoute -up-> GUI
+GUI <-->getMap
+getMap <--> mapHandler
 
-getPositionRoute --> getPositionRoute : timer
-getPositionRoute --> GUI
+calculatePosition <-left-> mapHandler
+
+updatePositionRoute --> updatePositionRoute : timer
+updatePositionRoute -up-> GUI
 WaterLeakRoute --> WaterLeakRoute : Timer
 WaterLeakRoute --> RemoveWaterQueue
 RemoveWaterQueue --> RemoveWaterRoute
-RemoveWaterRoute --> GUI
+RemoveWaterRoute -up-> GUI
 
 getWind --> getWind : Timer
-getWind --> IssPosition
-getWind --> WeatherService : < IssPosition >
+getWind -up-> IssPosition
+getWind -up-> WeatherService : < IssPosition >
 
 MoveRoute --> calculatePosition
-getPositionRoute --> calculatePosition
-getWind --> calculatePosition
+updatePositionRoute <--> calculatePosition
+getWind -> calculatePosition
 
 'agent agent
 'artifact artifact

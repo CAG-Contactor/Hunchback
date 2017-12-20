@@ -8,6 +8,7 @@ import org.apache.camel.Handler;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.awt.*;
@@ -26,47 +27,34 @@ import java.util.TreeMap;
 @Singleton
 @Named("positionBean")
 public class Position {
+    @Inject
+    @Named("windBean")
+    private Wind wind;
+
     private static final int INERTIA_TIME_IN_SEC = 5;
     private double stepFrequency;
-    private Point position = new Point(0, 0);
-    private Point minPosition = new Point(0, 0);
-    private Point maxPosition = new Point(499, 499);
+    private static final Point minPosition = new Point(0, 0);
+    private static final Point maxPosition = new Point(499, 499);
+    private Point position = new Point(maxPosition.x/2, maxPosition.y/2);
     private SortedMap<Long, String> steps = new TreeMap<>();
 
     @Handler
     public void move(@Body Message message, @Headers Map headers) {
         String direction = message.getBody(String.class);
-        switch (direction) {
-            case "up":
-                steps.put(System.currentTimeMillis(), "up");
-//                position.y = getNewY(position.y + steps);
-//                position.setLocation(position.x, position.y);
-                break;
-            case "down":
-                steps.put(System.currentTimeMillis(), "down");
-//                position.setLocation(position.x, position.y);
-                break;
-            case "right":
-                steps.put(System.currentTimeMillis(), "right");
-//                position.x = getNewX(position.x + steps);
-//                position.setLocation(position.x, position.y);
-                break;
-            case "left":
-                steps.put(System.currentTimeMillis(), "left");
-//                position.x = getNewX(position.x - steps);
-//                position.setLocation(position.x, position.y);
-                break;
+        if(direction.equals("up" )
+            || direction.equals("down")
+            || direction.equals("left")
+            || direction.equals("right")){
+            steps.put(System.currentTimeMillis(), direction);
         }
-//        WsPosition wsPosition = new WsPosition(position);
-//        message.setBody(wsPosition.toJSON());
-//        System.out.println("position = " + position);
     }
 
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
         Point inertiaRelPos = getInertiaRelativePosition();
-        position.x = getNewX(position.x + inertiaRelPos.x);
-        position.y = getNewX(position.y + inertiaRelPos.y);
+        Point windDrift = wind.getDrift();
+        position.x = getNewX(position.x + inertiaRelPos.x + windDrift.x);
+        position.y = getNewY(position.y + inertiaRelPos.y + windDrift.y);
         WsPosition wsPosition = new WsPosition(position);
         message.setBody(wsPosition.toJSON());
     }

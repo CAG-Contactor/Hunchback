@@ -25,6 +25,9 @@ public class HunchbackRoutes extends RouteBuilder {
     @Inject
     @Named("positionBean")
     private Object position;
+    @Inject
+    @Named("windBean")
+    private Object wind;
 
     private IssPositionProcessor issPositionProcessor = new IssPositionProcessor();
     private PositionToPlaceProcessor positionToPlaceProcessor = new PositionToPlaceProcessor();
@@ -93,8 +96,9 @@ public class HunchbackRoutes extends RouteBuilder {
                 .to("jms:queue:addWater");
 
         from("timer:position?period=100")
+                .routeId("update-position")
                 .bean(position,"getPosition")
-                //.log("send pos:${body}")
+//                .log("send pos:${body}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:step")
@@ -134,6 +138,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .to("jms:queue:removeWater");
 
         from("timer:foo?period=15000")
+            .routeId("get-ISS-poition-and-wind")
             .to("http4://api.open-notify.org/iss-now.json").streamCaching()
             .log("rest headers: ${headers}")
             .process(issPositionProcessor)
@@ -145,6 +150,7 @@ public class HunchbackRoutes extends RouteBuilder {
             .log(LoggingLevel.INFO, "${headers}")
             .recipientList(simple("https4://api.openweathermap.org/data/2.5/weather?lat=${header.latitude}&lon=${header.longitude}&appid=93e711f5c2bb6f3e6dfaffc3f431858c&units=metric"), "false")
             .process(weatherProcessor)
+            .bean(wind,"setWind")
             .log(LoggingLevel.INFO, "${headers}");
 
     }
