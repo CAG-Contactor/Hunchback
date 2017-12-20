@@ -1,0 +1,68 @@
+@startuml
+
+actor Dansmatta
+node RaspberryPi
+frame GUI
+cloud IssPosition
+cloud WeatherService
+frame Camel {
+    component DirectionRoutes
+    queue DirectionQueue
+    queue AddWaterQueue
+    queue RemoveWaterQueue
+    component MoveRoute
+    component AddWaterRoute
+    component getPositionRoute
+    component RemoveWaterRoute
+    component WaterLeakRoute
+    component getWind
+}
+frame BackEnd{
+    component calculatePosition
+}
+
+Dansmatta --> RaspberryPi
+RaspberryPi --> DirectionRoutes : <Up, Down, Left, Right>
+DirectionRoutes --> DirectionQueue
+DirectionRoutes --> AddWaterQueue
+DirectionQueue --> MoveRoute
+AddWaterQueue --> AddWaterRoute
+AddWaterRoute --> GUI
+
+getPositionRoute --> getPositionRoute : timer
+getPositionRoute --> GUI
+WaterLeakRoute --> WaterLeakRoute : Timer
+WaterLeakRoute --> RemoveWaterQueue
+RemoveWaterQueue --> RemoveWaterRoute
+RemoveWaterRoute --> GUI
+
+getWind --> getWind : Timer
+getWind --> IssPosition
+getWind --> WeatherService : < IssPosition >
+
+MoveRoute --> calculatePosition
+getPositionRoute --> calculatePosition
+getWind --> calculatePosition
+
+'agent agent
+'artifact artifact
+'boundary boundary
+'card card
+'cloud cloud
+'component component
+'control control
+'database database
+'entity entity
+'file file
+'folder folder
+'frame frame
+'interface  interface
+'node node
+'package package
+'queue queue
+'stack stack
+'rectangle rectangle
+'storage storage
+'usecase usecase
+
+@enduml
