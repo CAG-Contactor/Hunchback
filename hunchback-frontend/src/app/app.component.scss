@@ -2,7 +2,7 @@
   background-color: #eee;
   color: #666;
   border-radius: 5px;
-  padding: 20px;
+  padding: 5px;
 }
 
 .sidebar {
@@ -18,16 +18,24 @@
 
 .header {
   grid-area: header;
-
   color: #fff;
   background-color: #556068;
-  outline: 1px dashed #98abb9;
-  outline-offset: -5px;
+
+  h1 {
+    float: left;
+  }
+  .messages {
+    float: right;
+    ul {
+      margin: 0;
+      padding-left: 1.5em;
+    }
+  }
 }
 
 .wrapper {
   display: grid;
-  grid-gap: 10px;
+  grid-gap: 4px;
   grid-template-columns: 25%;
   grid-template-areas:
     "header header header header"
