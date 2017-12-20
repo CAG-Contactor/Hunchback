@@ -15,6 +15,14 @@ export class Scene {
     );
   }
 
+  draw(drawOperation: (tdc: CanvasRenderingContext2D) => void) {
+    const oldFillStyle = this.renderingContext.fillStyle;
+    drawOperation(
+      this.renderingContext
+    );
+    this.renderingContext.fillStyle = oldFillStyle;
+  }
+
   clear() {
     this.renderingContext.clearRect(0, 0, this.width, this.height)
   }

@@ -14,6 +14,12 @@ export class Gubbe implements Shape, Actor {
   readonly height: number = 10;
   readonly width: number = 10;
 
+  removeFrom(scene: Scene) {
+    scene.transformPosAndDraw(this, (x, y, c2d) => {
+      c2d.clearRect(x, y, this.height, this.width);
+    });
+  }
+
   renderOn(scene: Scene) {
     scene.transformPosAndDraw(this, (x, y, c2d) => {
       const oldFillStyle = c2d.fillStyle;
