@@ -1,21 +1,20 @@
 <div class="wrapper">
-  <div class="box header">
-    <h1>Hunchback</h1>
-
-    <div class="messages">
-      <h2>Messages</h2>
-      <ul>
-        <li>Position {{position|json}}</li>
-      </ul>
-    </div>
-  </div>
-
   <div class="box content">
     <app-game-grid></app-game-grid>
   </div>
 
   <div class="box sidebar">
-    <app-water-indicator></app-water-indicator>
+
+    <div class="messages-wrapper">
+      <h2>Messages</h2>
+      <ul>
+        <li>Position {{position|json}}</li>
+      </ul>
+    </div>
+
+    <div class="water-indicator-wrapper">
+      <app-water-indicator></app-water-indicator>
+    </div>
   </div>
 
 </div>

@@ -1,52 +1,14 @@
-.box {
-  background-color: #eee;
-  color: #666;
-  border-radius: 5px;
-  padding: 5px;
-}
-
-.sidebar {
-  grid-area: sidebar;
-
-  color: #fff;
-  background-color: #646872;
-}
-
-.content {
-  grid-area: content;
-}
-
-.header {
-  grid-area: header;
-  color: #fff;
-  background-color: #556068;
-
-  h1 {
-    float: left;
-  }
-  .messages {
-    float: right;
-    ul {
-      margin: 0;
-      padding-left: 1.5em;
-    }
-  }
-}
-
 .wrapper {
   display: grid;
-  grid-gap: 4px;
-  grid-template-columns: 25%;
-  grid-template-areas:
-    "header header header header"
-    "content content content sidebar";
-  background-color: #fff;
-  color: #444;
-}
+  width: 100%;
+  grid-template-columns: 1fr 350px;
 
-h1, h2 {
-  margin: 0;
-  text-align: left;
-  font-family: Helvetica, sans-serif;
-  font-weight: bold;
+  .sidebar > div {
+    padding: 10px;
+  }
+
+  .messages-wrapper {
+    background-color: #333;
+    margin-bottom: 10px;
+  }
 }
