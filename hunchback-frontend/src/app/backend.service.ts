@@ -63,6 +63,11 @@ export class BackendService {
     this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/right`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
+
+  restartGame() {
+    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/game/restart`)
+      .subscribe(r => console.debug(r), e => console.error(e));
+  }
 }
 
 export interface Message {

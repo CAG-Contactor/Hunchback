@@ -95,6 +95,13 @@ public class HunchbackRoutes extends RouteBuilder {
                 .setBody(simple("10"))
                 .to("jms:queue:addWater");
 
+        from("restlet:http://0.0.0.0:8080/game/restart")
+                .routeId("reset-game")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
+                .to("jms:queue:resetPosition")
+                .to("jms:queue:resetWater");
+
         from("timer:position?period=100")
                 .routeId("update-position")
                 .bean(position,"getPosition")
@@ -112,6 +119,10 @@ public class HunchbackRoutes extends RouteBuilder {
                 .bean(position,"move");
 //                .to("websocket:hunchback?sendToAll=true");
 
+        from("jms:queue:resetPosition")
+                .log("From JMS reset position")
+                .bean(position,"resetPosition");
+
         from("jms:queue:pulseValue")
                 .log("From JMS:${body}");
 
@@ -127,6 +138,13 @@ public class HunchbackRoutes extends RouteBuilder {
                 .log("From JMS removeWater:${body}")
                 .bean(waterContainerBean, "removeWater")
                 .log("water level:${headers.waterLevel}")
+                .to("websocket:hunchback?sendToAll=true");
+
+        from("jms:queue:resetWater")
+                .routeId("reset-water-queue")
+                .log("water level:${headers.waterLevel}")
+                .bean(waterContainerBean, "resetWater")
+                .log("water level reset:${headers.waterLevel}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:position")

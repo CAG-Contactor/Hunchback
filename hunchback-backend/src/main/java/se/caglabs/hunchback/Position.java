@@ -35,7 +35,12 @@ public class Position {
     private double stepFrequency;
     private static final Point minPosition = new Point(0, 0);
     private static final Point maxPosition = new Point(499, 499);
-    private Point position = new Point(maxPosition.x/2, maxPosition.y/2);
+    private Point position = initPosition();
+
+    private Point initPosition() {
+        return new Point(maxPosition.x/2, maxPosition.y/2);
+    }
+
     private SortedMap<Long, String> steps = new TreeMap<>();
 
     @Handler
@@ -53,10 +58,23 @@ public class Position {
     public void getPosition(@Body Message message, @Headers Map headers) {
         Point inertiaRelPos = getInertiaRelativePosition();
         Point windDrift = wind.getDrift();
-        position.x = getNewX(position.x + inertiaRelPos.x + windDrift.x);
-        position.y = getNewY(position.y + inertiaRelPos.y + windDrift.y);
+        setNewXAndYOnPosition(inertiaRelPos, windDrift);
         WsPosition wsPosition = new WsPosition(position);
         message.setBody(wsPosition.toJSON());
+    }
+
+    @Handler
+    public void resetPosition(@Body Message message, @Headers Map headers){
+        Point inertiaRelPos = getInertiaRelativePosition();
+        Point windDrift = wind.getDrift();
+        position = initPosition();
+        steps.clear();
+        setNewXAndYOnPosition(inertiaRelPos, windDrift);
+    }
+
+    private void setNewXAndYOnPosition(Point inertiaRelPos, Point windDrift) {
+        position.x = getNewX(position.x + inertiaRelPos.x + windDrift.x);
+        position.y = getNewY(position.y + inertiaRelPos.y + windDrift.y);
     }
 
     private int getNewY(int y) {
