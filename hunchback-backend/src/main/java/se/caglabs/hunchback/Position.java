@@ -31,17 +31,20 @@ public class Position {
     @Named("windBean")
     private Wind wind;
 
+    @Inject
+    @Named("collisionDetectionBean")
+    private CollisionDetection collisionDetection;
+
     private static final int INERTIA_TIME_IN_SEC = 5;
     private double stepFrequency;
-    private static final Point minPosition = new Point(0, 0);
-    private static final Point maxPosition = new Point(499, 499);
     private Point position = initPosition();
 
     private Point initPosition() {
-        return new Point(maxPosition.x/2, maxPosition.y/2);
+        return new Point(370, 304);
     }
 
     private SortedMap<Long, String> steps = new TreeMap<>();
+    private Point latestNoneCollisionCoordinates = new Point();
 
     @Handler
     public void move(@Body Message message, @Headers Map headers) {
@@ -55,46 +58,28 @@ public class Position {
     }
 
     @Handler
-    public void getPosition(@Body Message message, @Headers Map headers) {
-        Point inertiaRelPos = getInertiaRelativePosition();
-        Point windDrift = wind.getDrift();
-        setNewXAndYOnPosition(inertiaRelPos, windDrift);
-        WsPosition wsPosition = new WsPosition(position);
-        message.setBody(wsPosition.toJSON());
+    public void resetPosition(@Body Message message, @Headers Map headers){
+        position = initPosition();
+        steps.clear();
     }
 
     @Handler
-    public void resetPosition(@Body Message message, @Headers Map headers){
+    public void getPosition(@Body Message message, @Headers Map headers) {
         Point inertiaRelPos = getInertiaRelativePosition();
         Point windDrift = wind.getDrift();
-        position = initPosition();
-        steps.clear();
-        setNewXAndYOnPosition(inertiaRelPos, windDrift);
-    }
 
-    private void setNewXAndYOnPosition(Point inertiaRelPos, Point windDrift) {
-        position.x = getNewX(position.x + inertiaRelPos.x + windDrift.x);
-        position.y = getNewY(position.y + inertiaRelPos.y + windDrift.y);
-    }
+        position.x = position.x + inertiaRelPos.x + windDrift.x;
+        position.y = position.y + inertiaRelPos.y + windDrift.y;
 
-    private int getNewY(int y) {
-        if (y < minPosition.y) {
-            return minPosition.y;
+        if (collisionDetection.hasCollided(position)) {
+            position.x = latestNoneCollisionCoordinates.x;
+            position.y = latestNoneCollisionCoordinates.y;
+        } else {
+            latestNoneCollisionCoordinates.setLocation(position);
         }
-        if (y > maxPosition.y) {
-            return maxPosition.y;
-        }
-        return y;
-    }
 
-    private int getNewX(int x) {
-        if (x < minPosition.x) {
-            return minPosition.x;
-        }
-        if (x > maxPosition.x) {
-            return maxPosition.x;
-        }
-        return x;
+        WsPosition wsPosition = new WsPosition(position);
+        message.setBody(wsPosition.toJSON());
     }
 
     private Point getInertiaRelativePosition() {

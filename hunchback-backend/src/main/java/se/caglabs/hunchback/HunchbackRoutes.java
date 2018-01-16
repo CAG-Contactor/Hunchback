@@ -105,7 +105,6 @@ public class HunchbackRoutes extends RouteBuilder {
         from("timer:position?period=100")
                 .routeId("update-position")
                 .bean(position,"getPosition")
-//                .log("send pos:${body}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:step")

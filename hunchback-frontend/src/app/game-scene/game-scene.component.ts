@@ -35,7 +35,7 @@ export class GameSceneComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       const canvas = this.canvasRef.nativeElement as HTMLCanvasElement;
       this.scene = new Scene(canvas.getContext("2d"), 500, 500);
-      this.gubbe = new Gubbe();
+      this.gubbe = new Gubbe(0);
   }
 
 
