@@ -1,5 +1,10 @@
 package se.caglabs.hunchback;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.camel.Handler;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -22,14 +27,43 @@ public class Map {
     List<Rectangle> coordinatesOfObstacles;
     private static final String FILE_NAME_OF_MAP = "map.txt";
     private static final Long OBSTACLE = 1L;
-    private static final Integer tileSize = 32;
+    private static final int tileSize = 32;
 
     public Map() {
         coordinatesOfObstacles = new ArrayList<>(getCoordinatesOfAllObstacles());
     }
 
+    @Handler
+    public String getMap() {
+        ArrayList<ArrayList<Long>> map = getMapAsListFromFile();
+        int nrOfRows = map.size();
+        int nfOfColumns = map.get(0).size();
+        return toJSON(map, nrOfRows, nfOfColumns, tileSize);
+    }
+
+    private String toJSON(ArrayList<ArrayList<Long>> map, int nrOfRows, int nfOfColumns, int tileSize) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode rootNode = mapper.createObjectNode();
+        rootNode.put("nrOfRows", nrOfRows);
+        rootNode.put("nrOfColumns", nfOfColumns);
+        rootNode.put("tileSize", tileSize);
+
+        // Skapa en karta som är en array och där varje rad också är en array.
+        ArrayNode mapAsArray = rootNode.putArray("map");
+        map.forEach(row -> {
+            ArrayNode newArrayRow = mapAsArray.addArray();
+            row.forEach(column -> newArrayRow.add(column.intValue()));
+        });
+        try {
+            return mapper.writer().writeValueAsString(rootNode);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @SuppressWarnings("unchecked")
-    public static ArrayList<ArrayList<Long>> getMapasListFromFile() {
+    private ArrayList<ArrayList<Long>> getMapAsListFromFile() {
         final FileReader fileReader;
         try {
             fileReader = new FileReader(new ClassPathResource(FILE_NAME_OF_MAP).getFile().getPath());
@@ -49,7 +83,7 @@ public class Map {
     }
 
     private List<Rectangle> getCoordinatesOfAllObstacles() {
-        ArrayList<ArrayList<Long>> mapAsJsonArray = getMapasListFromFile();
+        ArrayList<ArrayList<Long>> mapAsJsonArray = getMapAsListFromFile();
         return findAllObstacleCoordinates(mapAsJsonArray);
     }
 

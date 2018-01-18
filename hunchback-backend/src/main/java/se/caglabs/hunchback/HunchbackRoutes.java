@@ -28,6 +28,10 @@ public class HunchbackRoutes extends RouteBuilder {
     @Inject
     @Named("windBean")
     private Object wind;
+    @Inject
+    @Named("mapBean")
+    private Object mapBean;
+
 
     private IssPositionProcessor issPositionProcessor = new IssPositionProcessor();
     private PositionToPlaceProcessor positionToPlaceProcessor = new PositionToPlaceProcessor();
@@ -94,6 +98,11 @@ public class HunchbackRoutes extends RouteBuilder {
                 .to("jms:queue:direction")
                 .setBody(simple("10"))
                 .to("jms:queue:addWater");
+        from("restlet:http://0.0.0.0:8080/map")
+                .routeId("map-rest")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
+                .bean(mapBean, "getMap");
 
         from("restlet:http://0.0.0.0:8080/game/restart")
                 .routeId("reset-game")
