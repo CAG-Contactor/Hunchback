@@ -15,6 +15,7 @@ import java.util.Map;
 @Named("waterContainerBean")
 public class WaterContainer {
     private int level = 1000;
+    private static final int DEFALT_WATER_LEVEL = 1000;
     private static final String MESSAGE_TYPE = "waterlevel";
 
     @Handler
@@ -28,6 +29,13 @@ public class WaterContainer {
     public void removeWater(@Body Message message, @Headers Map headers){
         level -= message.getBody(Integer.class);
         level = level < 0 ? 0 : level;
+        headers.put("waterLevel", level);
+        message.setBody(this.toJSON());
+    }
+
+    @Handler
+    public void resetWater(@Body Message message, @Headers Map headers){
+        level = DEFALT_WATER_LEVEL;
         headers.put("waterLevel", level);
         message.setBody(this.toJSON());
     }

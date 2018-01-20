@@ -1,25 +1,23 @@
-#game-grid {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: baseline;
-  height: 600px;
-  width: 600px;
+#viewport {
+  /**
+   * Position relative so that canvas elements
+   * inside of it will be relative to the parent
+   */
+  position: relative;
 }
 
-#game-grid .sprite {
-  box-sizing: border-box;
-  background-size: contain;
-
-  border: 1px solid #ccc;
-  width: 5%;
-  height: 5%;
+#viewport canvas {
+  /**
+   * Position absolute provides canvases to be able
+   * to be layered on top of each other
+   * Be sure to remember a z-index!
+   */
+  position: absolute;
 }
 
-.sprite.position {
-  background: url(/assets/svg/avatar_1.svg);
+canvas.background {
+  z-index: 1;
 }
-
-.sprite.wall {
-  background: url(/assets/svg/wall_1.svg);
-  background-color: brown;
+canvas.interactive {
+  z-index: 2;
 }

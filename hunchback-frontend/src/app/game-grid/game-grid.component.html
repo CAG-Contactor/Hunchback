@@ -1,14 +1,16 @@
-<h2>
-  Game-grid
-</h2>
+<!--
+ A layered canvas to simplify rendering
+ One background canvas, that represent the map. Static, and will not need re-rendering
+ One interactive canvas, that holds the moving avatar and objects you can interact with
+ -->
+<div id="viewport">
 
-<h3>Sprite: {{ sprites.length }} Sprites</h3>
+  <!-- Static background canvas -->
+  <canvas class="background" #bgCanvas></canvas>
 
-<div id="game-grid">
-  <div *ngFor="let sprite of sprites" [ngClass]="{
-    'sprite' : true,
-    'position' : sprite.code === '*',
-    'wall' : sprite.code === '|'
-  }">
-  </div>
+  <!-- Interactive canvas -->
+  <canvas class="interactive" #iaCanvas></canvas>
+
 </div>
+
+

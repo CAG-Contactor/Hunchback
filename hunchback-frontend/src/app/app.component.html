@@ -1,3 +1,20 @@
-<h1>Messages</h1>
-<p>Position {{position|json}}</p>
-<app-game-scene></app-game-scene>
+<div class="wrapper">
+  <div class="box content">
+    <app-game-grid></app-game-grid>
+  </div>
+
+  <div class="box sidebar">
+
+    <div class="messages-wrapper">
+      <h2>Messages</h2>
+      <ul>
+        <li>Position {{position|json}}</li>
+      </ul>
+    </div>
+
+    <div class="water-indicator-wrapper">
+      <app-water-indicator></app-water-indicator>
+    </div>
+    <button class="restart-game-button" (click)="restartGame()" type="button">Restart game</button>
+  </div>
+</div>

@@ -64,9 +64,9 @@ public class WeatherProcessor implements Processor{
 //        System.out.println("latitude.textValue() = " + mainTemp);
 //        System.out.println("longitude.textValue() = " + windSpeed);
     // set output in exchange
-    exchange.getOut().setHeader("weatherDescription", weatherDescription);
-    exchange.getOut().setHeader("mainTemp", mainTemp);
-    exchange.getOut().setHeader("windSpeed", windSpeed);
-    exchange.getOut().setHeader("windDirection", windDirection);
+    exchange.getOut().setHeader("weatherDescription", weatherDescription.asText());
+    exchange.getOut().setHeader("mainTemp", mainTemp.asDouble());
+    exchange.getOut().setHeader("windSpeed", windSpeed.asDouble());
+    exchange.getOut().setHeader("windDirection", windDirection.asDouble());
   }
 }

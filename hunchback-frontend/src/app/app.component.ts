@@ -41,6 +41,10 @@ export class AppComponent implements OnInit {
     }
   }
 
+  restartGame(): void{
+    this.backendService.restartGame();
+  }
+
   ngOnInit(): void {
     this.backendService.startWebSocket();
 

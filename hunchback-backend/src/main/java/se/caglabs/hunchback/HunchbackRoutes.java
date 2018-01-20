@@ -25,6 +25,13 @@ public class HunchbackRoutes extends RouteBuilder {
     @Inject
     @Named("positionBean")
     private Object position;
+    @Inject
+    @Named("windBean")
+    private Object wind;
+    @Inject
+    @Named("mapBean")
+    private Object mapBean;
+
 
     private IssPositionProcessor issPositionProcessor = new IssPositionProcessor();
     private PositionToPlaceProcessor positionToPlaceProcessor = new PositionToPlaceProcessor();
@@ -43,6 +50,11 @@ public class HunchbackRoutes extends RouteBuilder {
         wc.setPort(7890);
         // we can serve static resources from the classpath: or file: system
         wc.setStaticResources("classpath:.");
+
+        // MongoDb route example. Setup a database and try it. Read more here: http://camel.apache.org/mongodb.html
+//        from("direct:findById")
+//            .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
+//            .to("mock:resultFindById");
 
         from("timer:foo?period=60000")
             .streamCaching()
@@ -86,11 +98,23 @@ public class HunchbackRoutes extends RouteBuilder {
                 .to("jms:queue:direction")
                 .setBody(simple("10"))
                 .to("jms:queue:addWater");
+        from("restlet:http://0.0.0.0:8080/map")
+                .routeId("map-rest")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
+                .bean(mapBean, "getMap");
 
-        from("timer:position?period=500")
+        from("restlet:http://0.0.0.0:8080/game/restart")
+                .routeId("reset-game")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
+                .to("jms:queue:resetPosition")
+                .to("jms:queue:resetWater");
+
+        from("timer:position?period=100")
+                .routeId("update-position")
                 .bean(position,"getPosition")
-                .log("send pos:${body}")
-                .to("websocket:camel-iss?sendToAll=true");
+                .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:step")
                 .log("From JMS:${body}")
@@ -102,6 +126,10 @@ public class HunchbackRoutes extends RouteBuilder {
                 .log("From JMS:${body}")
                 .bean(position,"move");
 //                .to("websocket:hunchback?sendToAll=true");
+
+        from("jms:queue:resetPosition")
+                .log("From JMS reset position")
+                .bean(position,"resetPosition");
 
         from("jms:queue:pulseValue")
                 .log("From JMS:${body}");
@@ -120,6 +148,13 @@ public class HunchbackRoutes extends RouteBuilder {
                 .log("water level:${headers.waterLevel}")
                 .to("websocket:hunchback?sendToAll=true");
 
+        from("jms:queue:resetWater")
+                .routeId("reset-water-queue")
+                .log("water level:${headers.waterLevel}")
+                .bean(waterContainerBean, "resetWater")
+                .log("water level reset:${headers.waterLevel}")
+                .to("websocket:hunchback?sendToAll=true");
+
         from("jms:queue:position")
                 .log("From JMS:${body}");
 
@@ -129,6 +164,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .to("jms:queue:removeWater");
 
         from("timer:foo?period=15000")
+            .routeId("get-ISS-poition-and-wind")
             .to("http4://api.open-notify.org/iss-now.json").streamCaching()
             .log("rest headers: ${headers}")
             .process(issPositionProcessor)
@@ -140,6 +176,7 @@ public class HunchbackRoutes extends RouteBuilder {
             .log(LoggingLevel.INFO, "${headers}")
             .recipientList(simple("https4://api.openweathermap.org/data/2.5/weather?lat=${header.latitude}&lon=${header.longitude}&appid=93e711f5c2bb6f3e6dfaffc3f431858c&units=metric"), "false")
             .process(weatherProcessor)
+            .bean(wind,"setWind")
             .log(LoggingLevel.INFO, "${headers}");
 
     }

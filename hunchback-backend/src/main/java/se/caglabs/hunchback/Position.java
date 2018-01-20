@@ -8,6 +8,7 @@ import org.apache.camel.Handler;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.awt.*;
@@ -26,69 +27,59 @@ import java.util.TreeMap;
 @Singleton
 @Named("positionBean")
 public class Position {
+    @Inject
+    @Named("windBean")
+    private Wind wind;
+
+    @Inject
+    @Named("collisionDetectionBean")
+    private CollisionDetection collisionDetection;
+
     private static final int INERTIA_TIME_IN_SEC = 5;
     private double stepFrequency;
-    private Point position = new Point(0, 0);
-    private Point minPosition = new Point(0, 0);
-    private Point maxPosition = new Point(499, 499);
+    private Point position = initPosition();
+
+    private Point initPosition() {
+        return new Point(370, 304);
+    }
+
     private SortedMap<Long, String> steps = new TreeMap<>();
+    private Point latestNoneCollisionCoordinates = new Point();
 
     @Handler
     public void move(@Body Message message, @Headers Map headers) {
         String direction = message.getBody(String.class);
-        switch (direction) {
-            case "up":
-                steps.put(System.currentTimeMillis(), "up");
-//                position.y = getNewY(position.y + steps);
-//                position.setLocation(position.x, position.y);
-                break;
-            case "down":
-                steps.put(System.currentTimeMillis(), "down");
-//                position.setLocation(position.x, position.y);
-                break;
-            case "right":
-                steps.put(System.currentTimeMillis(), "right");
-//                position.x = getNewX(position.x + steps);
-//                position.setLocation(position.x, position.y);
-                break;
-            case "left":
-                steps.put(System.currentTimeMillis(), "left");
-//                position.x = getNewX(position.x - steps);
-//                position.setLocation(position.x, position.y);
-                break;
+        if(direction.equals("up" )
+            || direction.equals("down")
+            || direction.equals("left")
+            || direction.equals("right")){
+            steps.put(System.currentTimeMillis(), direction);
         }
-//        WsPosition wsPosition = new WsPosition(position);
-//        message.setBody(wsPosition.toJSON());
-//        System.out.println("position = " + position);
+    }
+
+    @Handler
+    public void resetPosition(@Body Message message, @Headers Map headers){
+        position = initPosition();
+        steps.clear();
     }
 
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
         Point inertiaRelPos = getInertiaRelativePosition();
-        position.x = getNewX(position.x + inertiaRelPos.x);
-        position.y = getNewX(position.y + inertiaRelPos.y);
+        Point windDrift = wind.getDrift();
+
+        position.x = position.x + inertiaRelPos.x + windDrift.x;
+        position.y = position.y + inertiaRelPos.y + windDrift.y;
+
+        if (collisionDetection.hasCollided(position)) {
+            position.x = latestNoneCollisionCoordinates.x;
+            position.y = latestNoneCollisionCoordinates.y;
+        } else {
+            latestNoneCollisionCoordinates.setLocation(position);
+        }
+
         WsPosition wsPosition = new WsPosition(position);
         message.setBody(wsPosition.toJSON());
-    }
-
-    private int getNewY(int y) {
-        if (y < minPosition.y) {
-            return minPosition.y;
-        }
-        if (y > maxPosition.y) {
-            return maxPosition.y;
-        }
-        return y;
-    }
-
-    private int getNewX(int x) {
-        if (x < minPosition.x) {
-            return minPosition.x;
-        }
-        if (x > maxPosition.x) {
-            return maxPosition.x;
-        }
-        return x;
     }
 
     private Point getInertiaRelativePosition() {
@@ -99,7 +90,7 @@ public class Position {
                 - values.stream().filter(d -> d.equals("left")).count();
         long ySpeed = values.stream().filter(d -> d.equals("up")).count()
                 - values.stream().filter(d -> d.equals("down")).count();
-        System.out.println("speed (" + xSpeed + ", " + ySpeed + ")");
+//        System.out.println("speed (" + xSpeed + ", " + ySpeed + ")");
         return new Point((int) xSpeed, (int) ySpeed);
     }
 

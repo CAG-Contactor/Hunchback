@@ -1,2 +1,3 @@
 .idea/
-Hunchback.iml
+**/*.iml
+**/target
