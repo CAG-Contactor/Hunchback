@@ -17,4 +17,10 @@
     </div>
     <button class="restart-game-button" (click)="restartGame()" type="button">Restart game</button>
   </div>
+  <div class="push"></div>
 </div>
+<footer class="footer">
+  <div class="status-bar">
+    <i class="fa" [ngClass]="{'fa-toggle-on': status === 'Connected', 'fa-toggle-off': status !== 'Connected'}"></i>
+  </div>
+</footer>
