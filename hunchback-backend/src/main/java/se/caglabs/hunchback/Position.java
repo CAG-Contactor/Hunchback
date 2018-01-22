@@ -114,8 +114,20 @@ public class Position {
             ObjectNode positionNode = mapper.createObjectNode();
             positionNode.put("x", postion.x);
             positionNode.put("y", postion.y);
-
             rootNode.set("position", positionNode);
+
+            ObjectNode windNode = mapper.createObjectNode();
+            Point windDrift = wind.getDrift();
+            windNode.put("x", windDrift.x);
+            windNode.put("y", windDrift.y);
+            rootNode.set("wind", windNode);
+
+            ObjectNode inertiaNode = mapper.createObjectNode();
+            Point  inertia = getInertiaRelativePosition();
+            inertiaNode.put("x", inertia.x);
+            inertiaNode.put("y", inertia.y);
+            rootNode.set("inertia", inertiaNode);
+
 
             try {
                 return mapper.writer().writeValueAsString(rootNode);
