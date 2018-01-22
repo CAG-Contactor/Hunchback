@@ -63,6 +63,7 @@ public class Position {
         steps.clear();
     }
 
+
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
         Point inertiaRelPos = getInertiaRelativePosition();
@@ -108,7 +109,7 @@ public class Position {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
             rootNode.put("messageType", MESSAGE_TYPE);
-//            rootNode.put("stepFrequency", stepFrequency);
+            rootNode.put("stepFrequency", stepFrequency);
 
             ObjectNode positionNode = mapper.createObjectNode();
             positionNode.put("x", postion.x);
