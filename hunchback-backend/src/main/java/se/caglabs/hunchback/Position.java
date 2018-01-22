@@ -88,8 +88,8 @@ public class Position {
         Collection<String> values = steps.values();
         long xSpeed = values.stream().filter(d -> d.equals("right")).count()
                 - values.stream().filter(d -> d.equals("left")).count();
-        long ySpeed = values.stream().filter(d -> d.equals("up")).count()
-                - values.stream().filter(d -> d.equals("down")).count();
+        long ySpeed = values.stream().filter(d -> d.equals("down")).count()
+                - values.stream().filter(d -> d.equals("up")).count();
 //        System.out.println("speed (" + xSpeed + ", " + ySpeed + ")");
         return new Point((int) xSpeed, (int) ySpeed);
     }
