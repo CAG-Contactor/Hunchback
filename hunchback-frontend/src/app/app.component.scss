@@ -1,7 +1,13 @@
 .wrapper {
   display: grid;
+  min-height: 100%;
   width: 100%;
   grid-template-columns: 1fr 350px;
+  margin-bottom: -30px;
+
+  .status-bar {
+    width: 100%;
+  }
 
   .sidebar > div {
     padding: 10px;
@@ -17,5 +23,14 @@
     font-weight: bold;
     font-size: 130%;
     text-transform: uppercase;
+  }
+}
+
+.footer,.push {
+  height: 30px;
+  background-color: black;
+  .status-bar {
+    font-family: sans-serif;
+    padding: 6px 6px;
   }
 }
