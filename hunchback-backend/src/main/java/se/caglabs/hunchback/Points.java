@@ -12,31 +12,30 @@ import javax.inject.Singleton;
 import java.util.Map;
 
 @Singleton
-@Named("waterContainerBean")
-public class WaterContainer {
-    private int level = 1000;
-    private static final int DEFALT_WATER_LEVEL = 1000;
-    private static final String MESSAGE_TYPE = "waterlevel";
+@Named("pointsBean")
+public class Points {
+    private int points = 0;
+    private static final String MESSAGE_TYPE = "points";
 
     @Handler
-    public void addWater(@Body Message message, @Headers Map headers){
-        level += message.getBody(Integer.class);
-        headers.put("WaterLevel", level);
+    public void add(@Body Message message, @Headers Map headers){
+        points += message.getBody(Integer.class);
+        headers.put("points", points);
         message.setBody(this.toJSON());
     }
 
     @Handler
-    public void removeWater(@Body Message message, @Headers Map headers){
-        level -= message.getBody(Integer.class);
-        level = level < 0 ? 0 : level;
-        headers.put("waterLevel", level);
+    public void remove(@Body Message message, @Headers Map headers){
+        points -= message.getBody(Integer.class);
+        points = points < 0 ? 0 : points;
+        headers.put("points", points);
         message.setBody(this.toJSON());
     }
 
     @Handler
-    public void resetWater(@Body Message message, @Headers Map headers){
-        level = DEFALT_WATER_LEVEL;
-        headers.put("waterLevel", level);
+    public void reset(@Body Message message, @Headers Map headers){
+        points = 0;
+        headers.put("points", points);
         message.setBody(this.toJSON());
     }
 
@@ -44,7 +43,7 @@ public class WaterContainer {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode rootNode = mapper.createObjectNode();
         rootNode.put("messageType", MESSAGE_TYPE);
-        rootNode.put("level", level);
+        rootNode.put("points", points);
         try {
             return mapper.writer().writeValueAsString(rootNode);
         } catch (JsonProcessingException e) {

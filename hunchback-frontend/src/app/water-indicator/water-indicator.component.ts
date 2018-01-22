@@ -16,7 +16,7 @@ export class WaterIndicatorComponent implements OnInit, AfterViewInit, OnDestroy
 
   private subscription: Subscription;
   waterCapacity: number;
-  waterLevel: number;
+  points: number;
   fillPercentage: number;
   isFull: boolean;
 
@@ -26,27 +26,27 @@ export class WaterIndicatorComponent implements OnInit, AfterViewInit, OnDestroy
   ngOnInit() {
     this.subscription = this.backendService.messageObservable()
       .subscribe(m => {
-        if (m.messageType === 'waterlevel') {
-          this.updateView(m.level);
+        if (m.messageType === 'points') {
+          this.updateView(m.points);
         }
       });
     this.isFull = false;
-    this.waterLevel = 1000;
+    this.points = 1000;
     this.waterCapacity = 2500;
     this.fillPercentage = this.getFillPercentage();
   }
 
   updateView(level: number) {
-    this.waterLevel = level;
+    this.points = level;
     this.fillPercentage = this.getFillPercentage();
     this.isFull = this.fillPercentage === 100;
   }
 
   getFillPercentage(): number {
-    if (this.waterLevel >= this.waterCapacity) {
+    if (this.points >= this.waterCapacity) {
       return 100;
     } else {
-      return Math.round(this.waterLevel / this.waterCapacity * 100);
+      return Math.round(this.points / this.waterCapacity * 100);
     }
   }
 

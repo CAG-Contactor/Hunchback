@@ -7,7 +7,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.stereotype.Component;
 import se.caglabs.hunchback.processors.IssPositionProcessor;
 import se.caglabs.hunchback.processors.PositionToPlaceProcessor;
@@ -20,8 +19,8 @@ import javax.jms.ConnectionFactory;
 @Component
 public class HunchbackRoutes extends RouteBuilder {
     @Inject
-    @Named("waterContainerBean")
-    private Object waterContainerBean;
+    @Named("pointsBean")
+    private Object pointsBean;
     @Inject
     @Named("positionBean")
     private Object position;
@@ -70,7 +69,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .simple("left")
                 .to("jms:queue:direction")
                 .setBody(simple("10"))
-                .to("jms:queue:addWater");
+                .to("jms:queue:addPoints");
         from("restlet:http://0.0.0.0:8080/direction/right?restletMethods=GET")
                 .routeId("right-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
@@ -79,7 +78,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .simple("right")
                 .to("jms:queue:direction")
                 .setBody(simple("10"))
-                .to("jms:queue:addWater");
+                .to("jms:queue:addPoints");
         from("restlet:http://0.0.0.0:8080/direction/up?restletMethods=GET")
                 .routeId("up-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
@@ -88,7 +87,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .simple("up")
                 .to("jms:queue:direction")
                 .setBody(simple("10"))
-                .to("jms:queue:addWater");
+                .to("jms:queue:addPoints");
         from("restlet:http://0.0.0.0:8080/direction/down?restletMethods=GET")
                 .routeId("down-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
@@ -97,7 +96,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .constant("down")
                 .to("jms:queue:direction")
                 .setBody(simple("10"))
-                .to("jms:queue:addWater");
+                .to("jms:queue:addPoints");
         from("restlet:http://0.0.0.0:8080/map")
                 .routeId("map-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
@@ -109,7 +108,7 @@ public class HunchbackRoutes extends RouteBuilder {
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
                 .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .to("jms:queue:resetPosition")
-                .to("jms:queue:resetWater");
+                .to("jms:queue:resetPoints");
 
         from("timer:position?period=100")
                 .routeId("update-position")
@@ -119,7 +118,7 @@ public class HunchbackRoutes extends RouteBuilder {
         from("jms:queue:step")
                 .log("From JMS:${body}")
                 .setBody(simple("10000"))
-                .to("jms:queue:addWater")
+                .to("jms:queue:addPoints")
                 .bean(position,"move");
 
         from("jms:queue:direction")
@@ -134,34 +133,34 @@ public class HunchbackRoutes extends RouteBuilder {
         from("jms:queue:pulseValue")
                 .log("From JMS:${body}");
 
-        from("jms:queue:addWater")
-                .routeId("add-water-queue")
+        from("jms:queue:addPoints")
+                .routeId("add-points-queue")
                 .log("From JMS:${body}")
-                .bean(waterContainerBean, "addWater")
-                .log("water level:${headers.waterLevel}")
+                .bean(pointsBean, "add")
+                .log("Points:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 
-        from("jms:queue:removeWater")
-                .routeId("remove-water-queue")
+        from("jms:queue:removePoints")
+                .routeId("remove-points-queue")
                 .log("From JMS removeWater:${body}")
-                .bean(waterContainerBean, "removeWater")
-                .log("water level:${headers.waterLevel}")
+                .bean(pointsBean, "remove")
+                .log("points:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 
-        from("jms:queue:resetWater")
-                .routeId("reset-water-queue")
-                .log("water level:${headers.waterLevel}")
-                .bean(waterContainerBean, "resetWater")
-                .log("water level reset:${headers.waterLevel}")
+        from("jms:queue:resetPoints")
+                .routeId("reset-points-queue")
+                .log("points:${headers.points}")
+                .bean(pointsBean, "reset")
+                .log("points reset:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:position")
                 .log("From JMS:${body}");
 
-        from("timer:waterleak?period=5s")
-                .routeId("waterleak-timer")
+        from("timer:pointleak?period=5s")
+                .routeId("pointleak-timer")
                 .setBody(simple("10"))
-                .to("jms:queue:removeWater");
+                .to("jms:queue:removePoints");
 
         from("timer:foo?period=15000")
             .routeId("get-ISS-poition-and-wind")
