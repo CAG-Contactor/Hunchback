@@ -4,6 +4,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.awt.*;
+import java.util.Optional;
+
+import static se.caglabs.hunchback.Map.tileSize;
 
 @Singleton
 @Named("collisionDetectionBean")
@@ -13,10 +16,11 @@ public class CollisionDetection {
     @Named("mapBean")
     private Map mapBean;
 
-    boolean hasCollided(Point position) {
-        Rectangle currentPosition = new Rectangle(position.x,position.y, 32, 32);
+    Optional<Rectangle> hasCollided(Point position) {
+        Rectangle currentPosition = new Rectangle(position.x,position.y, tileSize, tileSize);
         return mapBean.coordinatesOfObstacles.stream()
-                .anyMatch(obstacle -> obstacle.getBounds2D().intersects(currentPosition.getBounds2D()));
+                .filter(currentPosition::intersects)
+                .findFirst();
     }
 }
 
