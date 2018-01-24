@@ -94,16 +94,19 @@ public class Position {
             if (isCollisionOnLowerCorner()) {
                 position.y = currentPos.y;
             }
-        } else if (isCollisionSouthOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
+        }
+        if (isCollisionSouthOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
             // Räknar ut y positionen ovanför obstacle
             position.y = currentPos.y - collisionResult.height;
-        } else if (isCollisionWestOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
+        }
+        if (isCollisionWestOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
             // Räknar ut x positionen höger om obstacle
             position.x = currentPos.x + collisionResult.width;
             if (isCollisionOnLowerCorner()) {
                 position.y = currentPos.y;
             }
-        } else if (isCollisionNorthOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
+        }
+        if (isCollisionNorthOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
             // Räknar ut y positionen nedanför obstacle
             position.y = currentPos.y + collisionResult.height;
             if (isCollisionOnUpperCorner()) {
