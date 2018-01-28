@@ -7,7 +7,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.websocket.WebsocketComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.stereotype.Component;
 import se.caglabs.hunchback.processors.IssPositionProcessor;
 import se.caglabs.hunchback.processors.PositionToPlaceProcessor;
@@ -179,5 +178,8 @@ public class HunchbackRoutes extends RouteBuilder {
             .bean(wind,"setWind")
             .log(LoggingLevel.INFO, "${headers}");
 
+
     }
+
+
 }

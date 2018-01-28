@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { BackendService } from "./backend.service";
 import { GameGridComponent } from './game-grid/game-grid.component';
 import { GameSceneComponent } from './game-scene/game-scene.component';
+import { GameScoreComponent} from "./game-score/game-score.component";
 import { WaterIndicatorComponent } from './water-indicator/water-indicator.component';
 
 
@@ -15,6 +16,7 @@ import { WaterIndicatorComponent } from './water-indicator/water-indicator.compo
     AppComponent,
     GameGridComponent,
     GameSceneComponent,
+    GameScoreComponent,
     WaterIndicatorComponent
   ],
   imports: [

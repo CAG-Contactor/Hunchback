@@ -1,0 +1,26 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/data/mongo
+      http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+      http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <mongo:mongo-client id="myDb" host="127.0.0.1" port="27017" > <!--credentials="${mongo.user}:${mongo.pass}@${mongo.dbname}"-->
+        <mongo:client-options write-concern="NORMAL" />
+    </mongo:mongo-client>
+
+    <!--<camelContext xmlns="http://camel.apache.org/schema/spring">-->
+
+    <!--<propertyPlaceholder id="properties" location="mongodb.test.properties"/>-->
+
+    <!--<route>-->
+        <!--<from uri="restlet:http://0.0.0.0:8080/game/score?restletMethods=PUT" />-->
+        <!--<to uri="mongodb3:myDb?database=highScoreDb&amp;collection=scoreCollection&amp;operation=count&amp;dynamicity=true" />-->
+        <!--<to uri="mock:resultInsert" />-->
+    <!--</route>-->
+    <!--</camelContext>-->
+</beans>

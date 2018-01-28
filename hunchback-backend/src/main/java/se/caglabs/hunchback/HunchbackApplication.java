@@ -14,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @EnableHawtio
 public class HunchbackApplication {
     public static void main(String[] args) {
+//        ApplicationContext context =
+//        new ClassPathXmlApplicationContext("application-context.xml");
         SpringApplication.run(HunchbackApplication.class, args);
     }
 }
