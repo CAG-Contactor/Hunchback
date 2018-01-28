@@ -12,10 +12,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.awt.*;
-import java.util.Collection;
+import java.util.*;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+
+import static se.caglabs.hunchback.Map.tileSize;
 
 /**
  * Project:Hunchback
@@ -38,14 +38,12 @@ public class Position {
     private static final int INERTIA_TIME_IN_SEC = 5;
     private double stepFrequency;
     private Point position = initPosition();
+    private SortedMap<Long, String> steps = new TreeMap<>();
 
     private Point initPosition() {
         return new Point(370, 304);
     }
-
-    private SortedMap<Long, String> steps = new TreeMap<>();
-    private Point latestNoneCollisionCoordinates = new Point();
-
+    
     @Handler
     public void move(@Body Message message, @Headers Map headers) {
         String direction = message.getBody(String.class);
@@ -63,23 +61,82 @@ public class Position {
         steps.clear();
     }
 
+
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
         Point inertiaRelPos = getInertiaRelativePosition();
         Point windDrift = wind.getDrift();
 
+        Point currentPos = new Point(position.x, position.y);
+
+        // Current position with speed and wind
         position.x = position.x + inertiaRelPos.x + windDrift.x;
         position.y = position.y + inertiaRelPos.y + windDrift.y;
 
-        if (collisionDetection.hasCollided(position)) {
-            position.x = latestNoneCollisionCoordinates.x;
-            position.y = latestNoneCollisionCoordinates.y;
-        } else {
-            latestNoneCollisionCoordinates.setLocation(position);
-        }
+        Optional<Rectangle> obstacleOptional = collisionDetection.hasCollided(position);
+        obstacleOptional.ifPresent(rectangle -> handleCollision(inertiaRelPos, windDrift, currentPos, rectangle));
 
         WsPosition wsPosition = new WsPosition(position);
         message.setBody(wsPosition.toJSON());
+    }
+
+    private void handleCollision(Point inertiaRelPos, Point windDrift, Point currentPos, Rectangle obstacleAsRectangle) {
+        steps.clear();
+
+        Rectangle currentPosAsRectangle = new Rectangle(currentPos.x, currentPos.y, tileSize, tileSize);
+        Rectangle collisionResult = currentPosAsRectangle.intersection(obstacleAsRectangle);
+
+        Point inertiaRelPosAndWindDrift = new Point(inertiaRelPos.x + windDrift.x, inertiaRelPos.y + windDrift.y);
+
+        if (isCollisionEastOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
+            // Räknar ut x positionen vänster om obstacle
+            position.x = currentPos.x - collisionResult.width;
+            if (isCollisionOnLowerCorner()) {
+                position.y = currentPos.y;
+            }
+        }
+        if (isCollisionSouthOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
+            // Räknar ut y positionen ovanför obstacle
+            position.y = currentPos.y - collisionResult.height;
+        }
+        if (isCollisionWestOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
+            // Räknar ut x positionen höger om obstacle
+            position.x = currentPos.x + collisionResult.width;
+            if (isCollisionOnLowerCorner()) {
+                position.y = currentPos.y;
+            }
+        }
+        if (isCollisionNorthOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
+            // Räknar ut y positionen nedanför obstacle
+            position.y = currentPos.y + collisionResult.height;
+            if (isCollisionOnUpperCorner()) {
+                position.x = currentPos.x;
+            }
+        }
+    }
+
+    private boolean isCollisionOnUpperCorner() {
+        return collisionDetection.hasCollided(new Point(position.x + tileSize, position.y)).isPresent();
+    }
+
+    private boolean isCollisionOnLowerCorner() {
+        return collisionDetection.hasCollided(new Point(position.x, position.y + tileSize)).isPresent();
+    }
+
+    private boolean isCollisionNorthOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
+        return collisionResult.height <= 0 && (inertiaRelPosAndWindDrift.y) < 0;
+    }
+
+    private boolean isCollisionWestOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
+        return collisionResult.width <= 0 && (inertiaRelPosAndWindDrift.x) < 0;
+    }
+
+    private boolean isCollisionSouthOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
+        return collisionResult.height <= 0 && (inertiaRelPosAndWindDrift.y) > 0;
+    }
+
+    private boolean isCollisionEastOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
+        return collisionResult.width <= 0 && (inertiaRelPosAndWindDrift.x) > 0;
     }
 
     private Point getInertiaRelativePosition() {
@@ -88,8 +145,8 @@ public class Position {
         Collection<String> values = steps.values();
         long xSpeed = values.stream().filter(d -> d.equals("right")).count()
                 - values.stream().filter(d -> d.equals("left")).count();
-        long ySpeed = values.stream().filter(d -> d.equals("up")).count()
-                - values.stream().filter(d -> d.equals("down")).count();
+        long ySpeed = values.stream().filter(d -> d.equals("down")).count()
+                - values.stream().filter(d -> d.equals("up")).count();
 //        System.out.println("speed (" + xSpeed + ", " + ySpeed + ")");
         return new Point((int) xSpeed, (int) ySpeed);
     }
@@ -108,13 +165,25 @@ public class Position {
             ObjectMapper mapper = new ObjectMapper();
             ObjectNode rootNode = mapper.createObjectNode();
             rootNode.put("messageType", MESSAGE_TYPE);
-//            rootNode.put("stepFrequency", stepFrequency);
+            rootNode.put("stepFrequency", stepFrequency);
 
             ObjectNode positionNode = mapper.createObjectNode();
             positionNode.put("x", postion.x);
             positionNode.put("y", postion.y);
-
             rootNode.set("position", positionNode);
+
+            ObjectNode windNode = mapper.createObjectNode();
+            Point windDrift = wind.getDrift();
+            windNode.put("x", windDrift.x);
+            windNode.put("y", windDrift.y);
+            rootNode.set("wind", windNode);
+
+            ObjectNode inertiaNode = mapper.createObjectNode();
+            Point  inertia = getInertiaRelativePosition();
+            inertiaNode.put("x", inertia.x);
+            inertiaNode.put("y", inertia.y);
+            rootNode.set("inertia", inertiaNode);
+
 
             try {
                 return mapper.writer().writeValueAsString(rootNode);

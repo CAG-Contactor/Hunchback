@@ -13,7 +13,8 @@ import { BackendService } from "./backend.service";
 export class AppComponent implements OnInit {
   title = 'app';
   messages: any[] = [];
-  position = [0,0]
+  position = [0,0];
+  status: string;
 
   constructor(private readonly backendService: BackendService) {
 
@@ -47,7 +48,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.backendService.startWebSocket();
-
+    this.backendService.webSocketStatus()
+      .subscribe(sts => this.status = sts);
     this.backendService.messageObservable()
       .subscribe(m => {
         if (m.messageType === 'Position') this.position = [m.position.x, m.position.y]

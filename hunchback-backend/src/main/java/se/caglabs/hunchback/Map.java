@@ -27,7 +27,7 @@ public class Map {
     List<Rectangle> coordinatesOfObstacles;
     private static final String FILE_NAME_OF_MAP = "map.txt";
     private static final Long OBSTACLE = 1L;
-    private static final int tileSize = 32;
+    static final int tileSize = 32;
 
     public Map() {
         coordinatesOfObstacles = new ArrayList<>(getCoordinatesOfAllObstacles());
