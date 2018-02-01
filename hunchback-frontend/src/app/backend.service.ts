@@ -2,12 +2,12 @@ import {
   Inject,
   Injectable
 } from '@angular/core';
-import { DOCUMENT } from "@angular/common";
-import { Subject } from "rxjs/Subject";
-import { ReplaySubject } from "rxjs/ReplaySubject";
-import { HttpClient } from "@angular/common/http";
+import {DOCUMENT} from "@angular/common";
+import {Subject} from "rxjs/Subject";
+import {ReplaySubject} from "rxjs/ReplaySubject";
+import {HttpClient} from "@angular/common/http";
 import "rxjs/add/operator/take";
-import { Observable } from "rxjs/Observable";
+import {Observable} from "rxjs/Observable";
 
 @Injectable()
 export class BackendService {
@@ -90,6 +90,10 @@ export class BackendService {
   restartGame() {
     this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/game/restart`)
       .subscribe(r => console.debug(r), e => console.error(e));
+  }
+
+  getMap() {
+    return this.httpClient.get<any>(`http://${this.backendServer}:${this.port}/map`);
   }
 }
 

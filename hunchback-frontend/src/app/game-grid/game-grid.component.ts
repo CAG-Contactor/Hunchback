@@ -32,13 +32,6 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.gridMap = new GridMap(32);
-    const bgCanvas = this.canvasBgRef.nativeElement as HTMLCanvasElement;
-    const iaCanvas = this.canvasIaRef.nativeElement as HTMLCanvasElement;
-    this.bgScene = new Scene(bgCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
-    this.iaScene = new Scene(iaCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
-    this.gubbe = new Gubbe(this.gridMap.tileSize);
-    this.subscribeToUpdates();
   }
 
   ngOnDestroy(): void {
@@ -84,12 +77,21 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.resizeCanvas();
-    this.tileSetImage = new Image();
-    this.tileSetImage.src = '/assets/tile-sets/tile-set-v2.png';
-    this.tileSetImage.onload = () => {
-      this.paintMap();
-    };
+    this.backendService.getMap().subscribe(mapData => {
+      this.gridMap = new GridMap(mapData);
+      const bgCanvas = this.canvasBgRef.nativeElement as HTMLCanvasElement;
+      const iaCanvas = this.canvasIaRef.nativeElement as HTMLCanvasElement;
+      this.bgScene = new Scene(bgCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
+      this.iaScene = new Scene(iaCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
+      this.gubbe = new Gubbe(this.gridMap.tileSize);
+      this.subscribeToUpdates();
+      this.resizeCanvas();
+      this.tileSetImage = new Image();
+      this.tileSetImage.src = '/assets/tile-sets/tile-set-v2.png';
+      this.tileSetImage.onload = () => {
+        this.paintMap();
+      };
+    });
   }
 
   subscribeToUpdates(): void {
