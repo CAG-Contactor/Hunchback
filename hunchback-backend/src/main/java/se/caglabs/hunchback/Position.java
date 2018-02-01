@@ -50,6 +50,7 @@ public class Position {
     
     @Handler
     public void move(@Body Message message, @Headers Map headers) {
+        stateBean.start();
         String direction = message.getBody(String.class);
         if(direction.equals("up" )
             || direction.equals("down")
@@ -69,15 +70,16 @@ public class Position {
 
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
-        stateBean.start();
         Point inertiaRelPos = getInertiaRelativePosition();
         Point windDrift = wind.getDrift();
 
         Point currentPos = new Point(position.x, position.y);
 
         // Current position with speed and wind
-        position.x = position.x + inertiaRelPos.x + windDrift.x;
-        position.y = position.y + inertiaRelPos.y + windDrift.y;
+        if (stateBean.isStarted()) {
+            position.x = position.x + inertiaRelPos.x + windDrift.x;
+            position.y = position.y + inertiaRelPos.y + windDrift.y;
+        }
 
         // Hämtar det hinder vi krockar med utifrån position.x och position.y ifall vi krockar
         Optional<Rectangle> obstacleOptional = collisionHandler.fetchObstacleInCollision(position);

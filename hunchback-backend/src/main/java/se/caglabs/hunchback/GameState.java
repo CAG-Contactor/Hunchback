@@ -26,6 +26,10 @@ public class GameState {
   private State state = State.FINISHED;
 
 
+  public boolean isStarted() {
+    return state.equals(State.RUNNING);
+  }
+
   public void start() {
     if (state == State.ARMED) {
       state = State.RUNNING;
@@ -42,6 +46,8 @@ public class GameState {
       if (System.currentTimeMillis() - time >= 60 * 1000) {
         state = State.FINISHED;
       }
+    } else {
+        time = System.currentTimeMillis();
     }
   }
 
@@ -49,11 +55,15 @@ public class GameState {
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode rootNode = mapper.createObjectNode();
     rootNode.put("state", state.name());
-    rootNode.put("time",  getTimeInSeconds());
+    rootNode.put("time",  getTimeLeftInSeconds());
     return rootNode;
   }
 
-  private String getTimeInSeconds() {
-    return "" + ((System.currentTimeMillis() - time)/1000);
+  private String getTimeLeftInSeconds() {
+    return "" + (60L - getTimeInSeconds());
+  }
+
+  private long getTimeInSeconds() {
+    return ((System.currentTimeMillis() - time)/1000);
   }
 }

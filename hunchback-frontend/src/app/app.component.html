@@ -1,4 +1,5 @@
 <div class="wrapper">
+  <div *ngIf="message" class="game-message">{{message}}</div>
   <div class="game-container">
     <app-game-grid></app-game-grid>
   </div>
@@ -6,7 +7,19 @@
 </div>
 <footer class="footer">
   <div class="points">
-    <span class="margin-left">{{points}}</span>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6">{{points}}</div>
+        <div class="col-sm-6">{{secondsLeft}}</div>
+        <!--<fusioncharts-->
+          <!--[width]="50"-->
+          <!--[height]="50"-->
+          <!--[type]="angulargauge"-->
+          <!--[dataFormat]="json"-->
+          <!--[dataSource]="chart"-->
+        <!--&gt;</fusioncharts>-->
+      </div>
+    </div>
   </div>
   <div class="status-bar">
     <div class="pull-right">
