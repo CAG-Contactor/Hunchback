@@ -31,6 +31,9 @@ public class HunchbackRoutes extends RouteBuilder {
     @Named("mapBean")
     private Object mapBean;
 
+    @Inject
+    @Named("stateBean")
+    private Object stateBean;
 
     private IssPositionProcessor issPositionProcessor = new IssPositionProcessor();
     private PositionToPlaceProcessor positionToPlaceProcessor = new PositionToPlaceProcessor();
@@ -55,11 +58,14 @@ public class HunchbackRoutes extends RouteBuilder {
 //            .to("mongodb:myDb?database=flights&collection=tickets&operation=findById")
 //            .to("mock:resultFindById");
 
-        from("timer:foo?period=60000")
-            .streamCaching()
-            .to("http4://api.open-notify.org/iss-now.json")
-            .log("iss-data:${body}")
-            .to("websocket:camel-iss?sendToAll=true");
+
+        from("restlet:http://0.0.0.0:8080/game/start?restletMethods=GET")
+                .routeId("game-start")
+                .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
+                .setHeader("Access-Control-Allow-Origin", constant("*"))
+                .transform()
+                .simple("left")
+                .bean(stateBean, "start");
 
         from("restlet:http://0.0.0.0:8080/direction/left?restletMethods=GET")
                 .routeId("left-rest")
@@ -113,6 +119,7 @@ public class HunchbackRoutes extends RouteBuilder {
         from("timer:position?period=100")
                 .routeId("update-position")
                 .bean(position,"getPosition")
+            .log("Position: ${body}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:step")

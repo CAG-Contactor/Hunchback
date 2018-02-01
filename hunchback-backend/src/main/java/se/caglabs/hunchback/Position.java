@@ -31,6 +31,10 @@ public class Position {
     @Named("windBean")
     private Wind wind;
 
+//    @Inject
+//    @Named("stateBean")
+    private GameState stateBean = GameState.getInstance();
+
     @Inject
     @Named("collisionDetectionBean")
     private CollisionDetection collisionDetection;
@@ -58,12 +62,14 @@ public class Position {
     @Handler
     public void resetPosition(@Body Message message, @Headers Map headers){
         position = initPosition();
+        stateBean.arm();
         steps.clear();
     }
 
 
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
+        stateBean.start();
         Point inertiaRelPos = getInertiaRelativePosition();
         Point windDrift = wind.getDrift();
 
@@ -77,6 +83,7 @@ public class Position {
         obstacleOptional.ifPresent(rectangle -> handleCollision(inertiaRelPos, windDrift, currentPos, rectangle));
 
         WsPosition wsPosition = new WsPosition(position);
+        stateBean.tick();
         message.setBody(wsPosition.toJSON());
     }
 
@@ -183,7 +190,7 @@ public class Position {
             inertiaNode.put("x", inertia.x);
             inertiaNode.put("y", inertia.y);
             rootNode.set("inertia", inertiaNode);
-
+            rootNode.set("gameState", stateBean.toJSON());
 
             try {
                 return mapper.writer().writeValueAsString(rootNode);
