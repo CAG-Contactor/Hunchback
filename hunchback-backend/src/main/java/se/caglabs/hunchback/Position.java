@@ -50,6 +50,7 @@ public class Position {
     
     @Handler
     public void move(@Body Message message, @Headers Map headers) {
+        stateBean.start();
         String direction = message.getBody(String.class);
         if(direction.equals("up" )
             || direction.equals("down")
@@ -69,7 +70,6 @@ public class Position {
 
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
-        stateBean.start();
         Point inertiaRelPos = getInertiaRelativePosition();
         Point windDrift = wind.getDrift();
 

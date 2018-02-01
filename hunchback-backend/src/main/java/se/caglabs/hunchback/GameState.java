@@ -42,6 +42,8 @@ public class GameState {
       if (System.currentTimeMillis() - time >= 60 * 1000) {
         state = State.FINISHED;
       }
+    } else {
+        time = System.currentTimeMillis();
     }
   }
 
