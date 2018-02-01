@@ -8,7 +8,7 @@ export class PointIndicators implements Actor {
   private pointIndicators: PointIndicator[];
 
   update(pointIndicators: PointIndicator[]) {
-    this.minusSprite.src = '/assets/alfred.png';
+    this.minusSprite.src = '/assets/pile-of-poo-32x32.png';
     this.plusSprite.src = '/assets/cake.png';
     this.pointIndicators = pointIndicators;
   }

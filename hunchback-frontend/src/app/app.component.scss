@@ -3,11 +3,12 @@ $points-bar-height: 150px;
 $footer-height: $status-bar-height+$points-bar-height;
 
 .game-message {
+  animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
   position: fixed;
   text-align: center;
   z-index: 100;
   width: 100%;
-  top: 160px;
+  top: 80px;
   font-family: Led7Segment;
   color: red;
   font-size: 128px;
@@ -36,7 +37,7 @@ $footer-height: $status-bar-height+$points-bar-height;
     background-color: black;
     height: $points-bar-height;
     position: relative;
-    text-align: center;
+    text-align: right;
     font-family: Led7Segment;
     color: red;
     font-size: 96px;
@@ -49,3 +50,5 @@ $footer-height: $status-bar-height+$points-bar-height;
     padding: 6px 6px;
   }
 }
+
+@keyframes blinker { to { opacity: 0; } }

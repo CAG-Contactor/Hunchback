@@ -13,6 +13,7 @@ import { MotherOfAllGameStates } from './game-model/mother-of-all-game-states';
 })
 export class AppComponent implements OnInit {
   message: string;
+  secondsLeft: number;
   position = [0, 0];
   status: string;
   points: number = 0;
@@ -54,9 +55,13 @@ export class AppComponent implements OnInit {
       .subscribe(m => {
         if (m.messageType === 'Position') {
           const moags: MotherOfAllGameStates = m as MotherOfAllGameStates;
+          this.secondsLeft = moags.gameState.time;
           switch(moags.gameState.state) {
             case 'FINISHED':
               this.message = 'GAME OVER';
+              break;
+            case 'ARMED':
+              this.message = 'READY PLAYER ONE';
               break;
             default:
               this.message = undefined;
