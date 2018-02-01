@@ -1,18 +1,35 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'variables';
+@import '../node_modules/bootstrap/scss/bootstrap';
 @import '../node_modules/font-awesome/scss/font-awesome';
+
+@font-face {
+  font-family: Led7Segment;
+  src: url('./assets/7segment.woff');
+}
 
 body, html {
   margin: 0;
   height: 100%;
   color: white;
   background-color: #646872;
+  font-family: Arial, sans-serif;
 }
 
 h1, h2 {
   margin: 0;
   text-align: left;
-  font-family: Helvetica, sans-serif;
   font-weight: bold;
 }
+
+.margin-left {
+  margin-left: 6px;
+}
+
+.margin-right {
+  margin-right: 6px;
+}
+
+
+
 

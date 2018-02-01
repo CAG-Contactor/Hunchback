@@ -15,7 +15,7 @@ import {GridMap} from "../game-model/gridmap";
 @Component({
   selector: 'app-game-grid',
   templateUrl: './game-grid.component.html',
-  styleUrls: ['./game-grid.component.css']
+  styleUrls: ['./game-grid.component.scss']
 })
 export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('bgCanvas') canvasBgRef: ElementRef;

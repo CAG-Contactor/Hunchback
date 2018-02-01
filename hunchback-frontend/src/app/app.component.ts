@@ -3,7 +3,7 @@ import {
   HostListener,
   OnInit
 } from '@angular/core';
-import { BackendService } from "./backend.service";
+import { BackendService } from './backend.service';
 
 @Component({
   selector: 'app-root',
@@ -13,11 +13,11 @@ import { BackendService } from "./backend.service";
 export class AppComponent implements OnInit {
   title = 'app';
   messages: any[] = [];
-  position = [0,0];
+  position = [0, 0];
   status: string;
+  points: number;
 
   constructor(private readonly backendService: BackendService) {
-
   }
 
   @HostListener('window:keyup', ['$event'])
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
     }
   }
 
-  restartGame(): void{
+  restartGame(): void {
     this.backendService.restartGame();
   }
 
@@ -52,8 +52,9 @@ export class AppComponent implements OnInit {
       .subscribe(sts => this.status = sts);
     this.backendService.messageObservable()
       .subscribe(m => {
-        if (m.messageType === 'Position') this.position = [m.position.x, m.position.y]
-      })
+        if (m.messageType === 'Position') this.position = [m.position.x, m.position.y];
+        if (m.messageType === 'points') this.points = m.points;
+      });
   }
 
 }

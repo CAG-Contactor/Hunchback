@@ -1,36 +1,39 @@
+$status-bar-height: 50px;
+$points-bar-height: 150px;
+$footer-height: $status-bar-height+$points-bar-height;
+
+.game-container {
+  position: relative;
+  width: 100%;
+}
+
 .wrapper {
   display: grid;
   min-height: 100%;
   width: 100%;
-  grid-template-columns: 1fr 350px;
-  margin-bottom: -30px;
-
-  .status-bar {
-    width: 100%;
-  }
-
-  .sidebar > div {
-    padding: 10px;
-  }
-
-  .messages-wrapper {
-    background-color: #333;
-    margin-bottom: 10px;
-  }
-
-  .restart-game-button {
-    color: #900;
-    font-weight: bold;
-    font-size: 130%;
-    text-transform: uppercase;
-  }
+  margin-bottom: -$footer-height;
 }
 
-.footer,.push {
-  height: 30px;
-  background-color: black;
+.push {
+  height: $footer-height;
+}
+
+.footer {
+  height: $footer-height;
+  .points {
+    background-color: black;
+    height: $points-bar-height;
+    position: relative;
+    text-align: center;
+    font-family: Led7Segment;
+    color: red;
+    font-size: 96px;
+    text-shadow: 0 0 6px #ff4e00;
+  }
   .status-bar {
-    font-family: sans-serif;
+    width: 100%;
+    height: $status-bar-height;
+    background-color: black;
     padding: 6px 6px;
   }
 }
