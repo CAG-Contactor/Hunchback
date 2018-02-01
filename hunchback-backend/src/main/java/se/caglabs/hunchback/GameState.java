@@ -55,11 +55,15 @@ public class GameState {
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode rootNode = mapper.createObjectNode();
     rootNode.put("state", state.name());
-    rootNode.put("time",  getTimeInSeconds());
+    rootNode.put("time",  getTimeLeftInSeconds());
     return rootNode;
   }
 
-  private String getTimeInSeconds() {
-    return "" + ((System.currentTimeMillis() - time)/1000);
+  private String getTimeLeftInSeconds() {
+    return "" + (60L - getTimeInSeconds());
+  }
+
+  private long getTimeInSeconds() {
+    return ((System.currentTimeMillis() - time)/1000);
   }
 }
