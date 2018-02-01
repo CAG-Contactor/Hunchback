@@ -26,6 +26,10 @@ public class GameState {
   private State state = State.FINISHED;
 
 
+  public boolean isStarted() {
+    return state.equals(State.RUNNING);
+  }
+
   public void start() {
     if (state == State.ARMED) {
       state = State.RUNNING;

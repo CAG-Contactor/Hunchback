@@ -76,8 +76,10 @@ public class Position {
         Point currentPos = new Point(position.x, position.y);
 
         // Current position with speed and wind
-        position.x = position.x + inertiaRelPos.x + windDrift.x;
-        position.y = position.y + inertiaRelPos.y + windDrift.y;
+        if (stateBean.isStarted()) {
+            position.x = position.x + inertiaRelPos.x + windDrift.x;
+            position.y = position.y + inertiaRelPos.y + windDrift.y;
+        }
 
         Optional<Rectangle> obstacleOptional = collisionDetection.hasCollided(position);
         obstacleOptional.ifPresent(rectangle -> handleCollision(inertiaRelPos, windDrift, currentPos, rectangle));
