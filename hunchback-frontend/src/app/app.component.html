@@ -6,14 +6,13 @@
 </div>
 <footer class="footer">
   <div class="points">
-    <span class="margin-left">1234567</span>
+    <span class="margin-left">{{points}}</span>
   </div>
   <div class="status-bar">
     <div class="pull-right">
-
       <i class="fa" [ngClass]="{'fa-toggle-on': status === 'Connected', 'fa-toggle-off': status !== 'Connected'}"></i>
       <button type="button" class="btn btn-sm btn-outline-light margin-left" (click)="restartGame()">
-        <i class="fa fa-repeat"></i>&nbsp;Restart
+        <i class="fa fa-repeat"></i>&nbsp;Starta om spelet
       </button>
     </div>
   </div>
