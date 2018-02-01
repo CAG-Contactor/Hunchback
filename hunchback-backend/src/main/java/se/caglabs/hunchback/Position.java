@@ -36,8 +36,8 @@ public class Position {
     private GameState stateBean = GameState.getInstance();
 
     @Inject
-    @Named("collisionDetectionBean")
-    private CollisionDetection collisionDetection;
+    @Named("collisionHandler")
+    private CollisionHandler collisionHandler;
 
     private static final int INERTIA_TIME_IN_SEC = 5;
     private double stepFrequency;
@@ -79,71 +79,24 @@ public class Position {
         position.x = position.x + inertiaRelPos.x + windDrift.x;
         position.y = position.y + inertiaRelPos.y + windDrift.y;
 
-        Optional<Rectangle> obstacleOptional = collisionDetection.hasCollided(position);
-        obstacleOptional.ifPresent(rectangle -> handleCollision(inertiaRelPos, windDrift, currentPos, rectangle));
+        // Hämtar det hinder vi krockar med utifrån position.x och position.y ifall vi krockar
+        Optional<Rectangle> obstacleOptional = collisionHandler.fetchObstacleInCollision(position);
+        obstacleOptional.ifPresent(obstacleInCollision -> handleCollision(inertiaRelPos, windDrift, currentPos, obstacleInCollision));
 
         WsPosition wsPosition = new WsPosition(position);
         stateBean.tick();
         message.setBody(wsPosition.toJSON());
     }
 
-    private void handleCollision(Point inertiaRelPos, Point windDrift, Point currentPos, Rectangle obstacleAsRectangle) {
+    private void handleCollision(Point inertiaRelPos, Point windDrift, Point currentPos, Rectangle obstacleInCollision) {
         steps.clear();
-
-        Rectangle currentPosAsRectangle = new Rectangle(currentPos.x, currentPos.y, tileSize, tileSize);
-        Rectangle collisionResult = currentPosAsRectangle.intersection(obstacleAsRectangle);
-
         Point inertiaRelPosAndWindDrift = new Point(inertiaRelPos.x + windDrift.x, inertiaRelPos.y + windDrift.y);
+        Rectangle currentPosWithOutWindAndSpeed = new Rectangle(currentPos.x, currentPos.y, tileSize, tileSize);
 
-        if (isCollisionEastOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
-            // Räknar ut x positionen vänster om obstacle
-            position.x = currentPos.x - collisionResult.width;
-            if (isCollisionOnLowerCorner()) {
-                position.y = currentPos.y;
-            }
-        }
-        if (isCollisionSouthOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
-            // Räknar ut y positionen ovanför obstacle
-            position.y = currentPos.y - collisionResult.height;
-        }
-        if (isCollisionWestOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
-            // Räknar ut x positionen höger om obstacle
-            position.x = currentPos.x + collisionResult.width;
-            if (isCollisionOnLowerCorner()) {
-                position.y = currentPos.y;
-            }
-        }
-        if (isCollisionNorthOfCurrentePos(inertiaRelPosAndWindDrift, collisionResult)) {
-            // Räknar ut y positionen nedanför obstacle
-            position.y = currentPos.y + collisionResult.height;
-            if (isCollisionOnUpperCorner()) {
-                position.x = currentPos.x;
-            }
-        }
-    }
-
-    private boolean isCollisionOnUpperCorner() {
-        return collisionDetection.hasCollided(new Point(position.x + tileSize, position.y)).isPresent();
-    }
-
-    private boolean isCollisionOnLowerCorner() {
-        return collisionDetection.hasCollided(new Point(position.x, position.y + tileSize)).isPresent();
-    }
-
-    private boolean isCollisionNorthOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
-        return collisionResult.height <= 0 && (inertiaRelPosAndWindDrift.y) < 0;
-    }
-
-    private boolean isCollisionWestOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
-        return collisionResult.width <= 0 && (inertiaRelPosAndWindDrift.x) < 0;
-    }
-
-    private boolean isCollisionSouthOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
-        return collisionResult.height <= 0 && (inertiaRelPosAndWindDrift.y) > 0;
-    }
-
-    private boolean isCollisionEastOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
-        return collisionResult.width <= 0 && (inertiaRelPosAndWindDrift.x) > 0;
+        // Hämtar position närmast det hindret vi krockar för att undvika att vi "går igenom" hindret.
+        Point posClosestToObstacle = collisionHandler.fetchPositionClosestToObstacle(currentPosWithOutWindAndSpeed, obstacleInCollision, inertiaRelPosAndWindDrift, position);
+        position.x = posClosestToObstacle.x;
+        position.y = posClosestToObstacle.y;
     }
 
     private Point getInertiaRelativePosition() {
