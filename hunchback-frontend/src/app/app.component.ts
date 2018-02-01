@@ -4,6 +4,7 @@ import {
   OnInit
 } from '@angular/core';
 import { BackendService } from './backend.service';
+import { MotherOfAllGameStates } from './game-model/mother-of-all-game-states';
 
 @Component({
   selector: 'app-root',
@@ -52,7 +53,8 @@ export class AppComponent implements OnInit {
     this.backendService.messageObservable()
       .subscribe(m => {
         if (m.messageType === 'Position') {
-          switch(m.gameState.state) {
+          const moags: MotherOfAllGameStates = m as MotherOfAllGameStates;
+          switch(moags.gameState.state) {
             case 'FINISHED':
               this.message = 'GAME OVER';
               break;

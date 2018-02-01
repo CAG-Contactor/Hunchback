@@ -6,11 +6,15 @@ import {
   OnInit,
   ViewChild
 } from '@angular/core';
-import {BackendService} from "../backend.service";
-import {Subscription} from "rxjs/Subscription";
-import {Gubbe} from "../game-model/gubbe";
-import {Scene} from "../game-model/scene";
-import {GridMap} from "../game-model/gridmap";
+import { Subscription } from 'rxjs/Subscription';
+import { BackendService } from '../backend.service';
+import { GridMap } from '../game-model/shapes/gridmap';
+import { Gubbe } from '../game-model/shapes/gubbe';
+import { MotherOfAllGameStates } from '../game-model/mother-of-all-game-states';
+import { PointIndicator } from '../game-model/point-indicator';
+import { PointIndicators } from '../game-model/shapes/point-indicators';
+import { Position } from '../game-model/position';
+import { Scene } from '../game-model/shapes/scene';
 
 @Component({
   selector: 'app-game-grid',
@@ -27,6 +31,7 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
   private gubbe: Gubbe;
   private gridMap: GridMap;
   private tileSetImage: HTMLImageElement;
+  private pointIndicators: PointIndicators;
 
   constructor(private readonly backendService: BackendService) {
   }
@@ -38,6 +43,7 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.bgScene = new Scene(bgCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
     this.iaScene = new Scene(iaCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
     this.gubbe = new Gubbe(this.gridMap.tileSize);
+    this.pointIndicators = new PointIndicators();
     this.subscribeToUpdates();
   }
 
@@ -50,7 +56,7 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
     const rows = this.gridMap.map.length;
     const cols = this.gridMap.map[0].length;
     const tileSize = this.gridMap.tileSize;
-    console.log("Painting map: " + rows + " rows, " + cols + " columns");
+    console.log('Painting map: ' + rows + ' rows, ' + cols + ' columns');
 
     this.gridMap.map.forEach((row, y) => {
       row.forEach((tile, x) => {
@@ -64,12 +70,12 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  updateView(x: number, y: number) {
+  renderView() {
     // Clear scene
     this.iaScene.clear();
-    // Update game state
-    this.gubbe.moveTo(x, y);
-    // Render
+    // Render point indicators
+    this.pointIndicators.renderOn(this.iaScene);
+    // Render dude
     this.gubbe.renderOn(this.iaScene);
   }
 
@@ -96,7 +102,17 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.subscription = this.backendService.messageObservable()
       .subscribe(m => {
         if (m.messageType === 'Position') {
-          this.updateView(m.position.x, m.position.y);
+          const moags = m as MotherOfAllGameStates;
+          moags.gameState.pointIndicators = [
+            {x: 55, y: 55, pointIndicatorType: 'MINUS'},
+            {x: 55, y: 200, pointIndicatorType: 'PLUS'}
+          ];
+
+          // Update game state
+          this.gubbe.moveTo(moags.position.x, moags.position.y);
+          this.pointIndicators.update(moags.gameState.pointIndicators);
+          // Render view
+          this.renderView();
         }
       });
   }

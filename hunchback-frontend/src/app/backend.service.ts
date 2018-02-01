@@ -1,17 +1,18 @@
+import { DOCUMENT } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import {
   Inject,
   Injectable
 } from '@angular/core';
-import { DOCUMENT } from "@angular/common";
-import { Subject } from "rxjs/Subject";
-import { ReplaySubject } from "rxjs/ReplaySubject";
-import { HttpClient } from "@angular/common/http";
-import "rxjs/add/operator/take";
-import { Observable } from "rxjs/Observable";
+import 'rxjs/add/operator/take';
+import { Observable } from 'rxjs/Observable';
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { Subject } from 'rxjs/Subject';
+import { MessageUnion } from './game-model/message';
 
 @Injectable()
 export class BackendService {
-  private messageSubject: Subject<Message> = new ReplaySubject(1);
+  private messageSubject: Subject<MessageUnion> = new ReplaySubject(1);
   private statusSubject: Subject<string> = new ReplaySubject(1);
   private _ws: WebSocket;
   private backendServer: string;
@@ -68,32 +69,28 @@ export class BackendService {
   };
 
   sendUp() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/up`)
+    this.httpClient.get<MessageUnion>(`http://${this.backendServer}:${this.port}/direction/up`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendLeft() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/left`)
+    this.httpClient.get<MessageUnion>(`http://${this.backendServer}:${this.port}/direction/left`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendDown() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/down`)
+    this.httpClient.get<MessageUnion>(`http://${this.backendServer}:${this.port}/direction/down`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   sendRight() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/direction/right`)
+    this.httpClient.get<MessageUnion>(`http://${this.backendServer}:${this.port}/direction/right`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 
   restartGame() {
-    this.httpClient.get<Message>(`http://${this.backendServer}:${this.port}/game/restart`)
+    this.httpClient.get<MessageUnion>(`http://${this.backendServer}:${this.port}/game/restart`)
       .subscribe(r => console.debug(r), e => console.error(e));
   }
 }
 
-export interface Message {
-  messageType: string;
-  [propName: string]: any;
-}
