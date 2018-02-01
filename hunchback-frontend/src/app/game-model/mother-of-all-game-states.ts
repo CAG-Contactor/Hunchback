@@ -15,7 +15,6 @@ export interface MotherOfAllGameStates {
   gameState: {
     time: number;
     state: 'FINISHED' | 'ARMED' | 'RUNNING';
-    time: number;
     pointIndicators: PointIndicator[];
   }
 }
