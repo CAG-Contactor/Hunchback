@@ -4,6 +4,7 @@ import {
   OnInit
 } from '@angular/core';
 import { BackendService } from './backend.service';
+import { MotherOfAllGameStates } from './game-model/mother-of-all-game-states';
 
 @Component({
   selector: 'app-root',
@@ -11,11 +12,10 @@ import { BackendService } from './backend.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  title = 'app';
-  messages: any[] = [];
+  message: string;
   position = [0, 0];
   status: string;
-  points: number;
+  points: number = 0;
 
   constructor(private readonly backendService: BackendService) {
   }
@@ -52,7 +52,16 @@ export class AppComponent implements OnInit {
       .subscribe(sts => this.status = sts);
     this.backendService.messageObservable()
       .subscribe(m => {
-        if (m.messageType === 'Position') this.position = [m.position.x, m.position.y];
+        if (m.messageType === 'Position') {
+          const moags: MotherOfAllGameStates = m as MotherOfAllGameStates;
+          switch(moags.gameState.state) {
+            case 'FINISHED':
+              this.message = 'GAME OVER';
+              break;
+            default:
+              this.message = undefined;
+          }
+        }
         if (m.messageType === 'points') this.points = m.points;
       });
   }

@@ -2,6 +2,18 @@ $status-bar-height: 50px;
 $points-bar-height: 150px;
 $footer-height: $status-bar-height+$points-bar-height;
 
+.game-message {
+  position: fixed;
+  text-align: center;
+  z-index: 100;
+  width: 100%;
+  top: 160px;
+  font-family: Led7Segment;
+  color: red;
+  font-size: 128px;
+  text-shadow: 0 0 6px #ff4e00;
+}
+
 .game-container {
   position: relative;
   width: 100%;
