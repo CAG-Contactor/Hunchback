@@ -21,7 +21,7 @@ public class GameState {
     ARMED
   }
 
-  private Long time = 0L;
+  private Long time = System.currentTimeMillis();
 
   private State state = State.FINISHED;
 
@@ -29,7 +29,7 @@ public class GameState {
   public void start() {
     if (state == State.ARMED) {
       state = State.RUNNING;
-      tick();
+      time = System.currentTimeMillis();
     }
   }
 
@@ -41,8 +41,6 @@ public class GameState {
     if (state == State.RUNNING) {
       if (System.currentTimeMillis() - time >= 60 * 1000) {
         state = State.FINISHED;
-      } else {
-        time = System.currentTimeMillis();
       }
     }
   }
@@ -56,6 +54,6 @@ public class GameState {
   }
 
   private String getTimeInSeconds() {
-    return "" + (System.currentTimeMillis() - time/1000);
+    return "" + ((System.currentTimeMillis() - time)/1000);
   }
 }
