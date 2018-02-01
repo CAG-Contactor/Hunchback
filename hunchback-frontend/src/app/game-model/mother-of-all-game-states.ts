@@ -13,6 +13,7 @@ export interface MotherOfAllGameStates {
   position: Position;
   stepFrequency: number;
   gameState: {
+    time: number;
     state: 'FINISHED' | 'ARMED' | 'RUNNING';
     time: number;
     pointIndicators: PointIndicator[];
