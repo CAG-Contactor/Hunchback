@@ -64,6 +64,6 @@ public class GameState {
   }
 
   private long getTimeInSeconds() {
-    return ((System.currentTimeMillis() - time)/1000);
+    return state.equals(State.FINISHED) ? 60L : ((System.currentTimeMillis() - time)/1000);
   }
 }
