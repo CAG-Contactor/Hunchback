@@ -1,26 +1,13 @@
+
 <div class="wrapper">
-  <div class="box content">
+  <div class="game-container">
     <app-game-grid></app-game-grid>
-  </div>
-
-  <div class="box sidebar">
-
-    <div class="messages-wrapper">
-      <h2>Messages</h2>
-      <ul>
-        <li>Position {{position|json}}</li>
-      </ul>
-    </div>
-
-    <div class="water-indicator-wrapper">
-      <app-water-indicator></app-water-indicator>
-    </div>
-    <button class="restart-game-button" (click)="restartGame()" type="button">Restart game</button>
   </div>
   <div class="push"></div>
 </div>
 <footer class="footer">
   <div class="status-bar">
     <i class="fa" [ngClass]="{'fa-toggle-on': status === 'Connected', 'fa-toggle-off': status !== 'Connected'}"></i>
+    <button  type="button" class="btn btn-sm btn-outline-light margin-left" (click)="restartGame()"><i class="fa fa-repeat"></i>&nbsp;Restart</button>
   </div>
 </footer>

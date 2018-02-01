@@ -1,29 +1,23 @@
+$footer-height: 40px;
+
+.game-container {
+  position: relative;
+  width: 100%;
+}
+
 .wrapper {
   display: grid;
   min-height: 100%;
   width: 100%;
-  grid-template-columns: 1fr 350px;
-  margin-bottom: -30px;
-
-  .sidebar > div {
-    padding: 10px;
-  }
-
-  .messages-wrapper {
-    background-color: #333;
-    margin-bottom: 10px;
-  }
-
-  .restart-game-button {
-    color: #900;
-    font-weight: bold;
-    font-size: 130%;
-    text-transform: uppercase;
-  }
+  margin-bottom: -$footer-height;
 }
 
-.footer, .push {
-  height: 30px;
+.push {
+  height: $footer-height;
+}
+
+.footer{
+  height: $footer-height;
   background-color: black;
   .status-bar {
     padding: 6px 6px;
