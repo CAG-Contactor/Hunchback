@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 @Singleton
 @Named("stateBean")
 public class GameState {
+  public static final long PLAY_TIME = 60L;
   private static GameState instance = new GameState();
   public static GameState getInstance() {
     return instance;
@@ -43,7 +44,7 @@ public class GameState {
 
   public void tick() {
     if (state == State.RUNNING) {
-      if (System.currentTimeMillis() - time >= 60 * 1000) {
+      if (System.currentTimeMillis() - time >= PLAY_TIME * 1000) {
         state = State.FINISHED;
       }
     } else {
@@ -60,10 +61,10 @@ public class GameState {
   }
 
   private String getTimeLeftInSeconds() {
-    return "" + (60L - getTimeInSeconds());
+    return "" + (PLAY_TIME - getTimeInSeconds());
   }
 
   private long getTimeInSeconds() {
-    return state.equals(State.FINISHED) ? 60L : ((System.currentTimeMillis() - time)/1000);
+    return state.equals(State.FINISHED) ? PLAY_TIME : ((System.currentTimeMillis() - time)/1000);
   }
 }
