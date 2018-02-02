@@ -5,6 +5,7 @@ import {
   Injectable
 } from '@angular/core';
 import 'rxjs/add/operator/take';
+import 'rxjs/add/operator/take';
 import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
@@ -91,6 +92,10 @@ export class BackendService {
   restartGame() {
     this.httpClient.get<MessageUnion>(`http://${this.backendServer}:${this.port}/game/restart`)
       .subscribe(r => console.debug(r), e => console.error(e));
+  }
+
+  getMap() {
+    return this.httpClient.get<any>(`http://${this.backendServer}:${this.port}/map`);
   }
 }
 

@@ -8,12 +8,10 @@ import {
 } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { BackendService } from '../backend.service';
+import { MotherOfAllGameStates } from '../game-model/mother-of-all-game-states';
 import { GridMap } from '../game-model/shapes/gridmap';
 import { Gubbe } from '../game-model/shapes/gubbe';
-import { MotherOfAllGameStates } from '../game-model/mother-of-all-game-states';
-import { PointIndicator } from '../game-model/point-indicator';
 import { PointIndicators } from '../game-model/shapes/point-indicators';
-import { Position } from '../game-model/position';
 import { Scene } from '../game-model/shapes/scene';
 
 @Component({
@@ -90,12 +88,21 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.resizeCanvas();
-    this.tileSetImage = new Image();
-    this.tileSetImage.src = '/assets/tile-sets/tile-set-v2.png';
-    this.tileSetImage.onload = () => {
-      this.paintMap();
-    };
+    this.backendService.getMap().subscribe(mapData => {
+      this.gridMap = new GridMap(mapData);
+      const bgCanvas = this.canvasBgRef.nativeElement as HTMLCanvasElement;
+      const iaCanvas = this.canvasIaRef.nativeElement as HTMLCanvasElement;
+      this.bgScene = new Scene(bgCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
+      this.iaScene = new Scene(iaCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
+      this.gubbe = new Gubbe(this.gridMap.tileSize);
+      this.subscribeToUpdates();
+      this.resizeCanvas();
+      this.tileSetImage = new Image();
+      this.tileSetImage.src = '/assets/tile-sets/tile-set-v2.png';
+      this.tileSetImage.onload = () => {
+        this.paintMap();
+      };
+    });
   }
 
   subscribeToUpdates(): void {

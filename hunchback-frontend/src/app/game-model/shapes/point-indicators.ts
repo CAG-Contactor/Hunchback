@@ -18,7 +18,7 @@ export class PointIndicators implements Actor {
   }
 
   renderOn(scene: Scene) {
-    this.pointIndicators.forEach(
+    this.pointIndicators && this.pointIndicators.forEach(
       pi => {
         const sprite = pi.pointIndicatorType === 'MINUS' ?
           this.minusSprite :
