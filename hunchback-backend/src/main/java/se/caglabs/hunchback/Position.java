@@ -31,13 +31,18 @@ public class Position {
     @Named("windBean")
     private Wind wind;
 
+    //FIXME: Ta bort sen
+    @Inject
+    @Named("mapBean")
+    private se.caglabs.hunchback.Map mapBean;
+
 //    @Inject
 //    @Named("stateBean")
     private GameState stateBean = GameState.getInstance();
 
     @Inject
-    @Named("collisionHandler")
-    private CollisionHandler collisionHandler;
+    @Named("detectionHandler")
+    private DetectionHandler detectionHandler;
 
     private static final int INERTIA_TIME_IN_SEC = 5;
     private double stepFrequency;
@@ -51,6 +56,7 @@ public class Position {
     @Handler
     public void move(@Body Message message, @Headers Map headers) {
         stateBean.start();
+
         String direction = message.getBody(String.class);
         if(direction.equals("up" )
             || direction.equals("down")
@@ -65,8 +71,8 @@ public class Position {
         position = initPosition();
         stateBean.arm();
         steps.clear();
+        stateBean.resetPointsIndicator(mapBean.pointIndicators);
     }
-
 
     @Handler
     public void getPosition(@Body Message message, @Headers Map headers) {
@@ -82,12 +88,19 @@ public class Position {
         }
 
         // Hämtar det hinder vi krockar med utifrån position.x och position.y ifall vi krockar
-        Optional<Rectangle> obstacleOptional = collisionHandler.fetchObstacleInCollision(position);
+        Optional<Rectangle> obstacleOptional = detectionHandler.fetchObstacleInCollision(position);
         obstacleOptional.ifPresent(obstacleInCollision -> handleCollision(inertiaRelPos, windDrift, currentPos, obstacleInCollision));
+
+        Optional<PointIndicator> touchedPointIndicatorOptional = detectionHandler.touchingPointIndicatorDetection(currentPos);
+        touchedPointIndicatorOptional.ifPresent(this::handleTouching);
 
         WsPosition wsPosition = new WsPosition(position);
         stateBean.tick();
         message.setBody(wsPosition.toJSON());
+    }
+
+    private void handleTouching(PointIndicator touchedPointIndicator) {
+        stateBean.removePointIndicator(touchedPointIndicator);
     }
 
     private void handleCollision(Point inertiaRelPos, Point windDrift, Point currentPos, Rectangle obstacleInCollision) {
@@ -96,7 +109,7 @@ public class Position {
         Rectangle currentPosWithOutWindAndSpeed = new Rectangle(currentPos.x, currentPos.y, tileSize, tileSize);
 
         // Hämtar position närmast det hindret vi krockar för att undvika att vi "går igenom" hindret.
-        Point posClosestToObstacle = collisionHandler.fetchPositionClosestToObstacle(currentPosWithOutWindAndSpeed, obstacleInCollision, inertiaRelPosAndWindDrift, position);
+        Point posClosestToObstacle = detectionHandler.fetchPositionClosestToObstacle(currentPosWithOutWindAndSpeed, obstacleInCollision, inertiaRelPosAndWindDrift, position);
         position.x = posClosestToObstacle.x;
         position.y = posClosestToObstacle.y;
     }

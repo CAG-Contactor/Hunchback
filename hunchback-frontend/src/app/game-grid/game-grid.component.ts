@@ -103,10 +103,6 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe(m => {
         if (m.messageType === 'Position') {
           const moags = m as MotherOfAllGameStates;
-          moags.gameState.pointIndicators = [
-            {x: 55, y: 55, pointIndicatorType: 'MINUS'},
-            {x: 55, y: 200, pointIndicatorType: 'PLUS'}
-          ];
 
           // Update game state
           this.gubbe.moveTo(moags.position.x, moags.position.y);

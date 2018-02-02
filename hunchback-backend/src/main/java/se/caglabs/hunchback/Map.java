@@ -20,17 +20,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static se.caglabs.hunchback.PointIndicator.getPointIndicatorType;
+
 @Singleton
 @Named("mapBean")
 public class Map {
 
     List<Rectangle> coordinatesOfObstacles;
+    List<PointIndicator> pointIndicators;
     private static final String FILE_NAME_OF_MAP = "map.txt";
-    private static final Long OBSTACLE = 1L;
+    private static final Long WALL = 1L;
+    private static final Long GRASS = 0L;
+    static final Long PLUS = 2L;
+    static final Long MINUS = 3L;
     static final int tileSize = 32;
 
     public Map() {
         coordinatesOfObstacles = new ArrayList<>(getCoordinatesOfAllObstacles());
+        pointIndicators = new ArrayList<>(getPointIndicators());
+    }
+
+    private List<PointIndicator> getPointIndicators() {
+        ArrayList<ArrayList<Long>> mapAsJsonArray = getMapAsListFromFile();
+        return findAllPointIndicators(mapAsJsonArray);
     }
 
     @Handler
@@ -38,10 +50,10 @@ public class Map {
         ArrayList<ArrayList<Long>> map = getMapAsListFromFile();
         int nrOfRows = map.size();
         int nfOfColumns = map.get(0).size();
-        return toJSON(map, nrOfRows, nfOfColumns, tileSize);
+        return mapToJSON(map, nrOfRows, nfOfColumns, tileSize);
     }
 
-    private String toJSON(ArrayList<ArrayList<Long>> map, int nrOfRows, int nfOfColumns, int tileSize) {
+    private String mapToJSON(ArrayList<ArrayList<Long>> map, int nrOfRows, int nfOfColumns, int tileSize) {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode rootNode = mapper.createObjectNode();
         rootNode.put("nrOfRows", nrOfRows);
@@ -52,7 +64,13 @@ public class Map {
         ArrayNode mapAsArray = rootNode.putArray("map");
         map.forEach(row -> {
             ArrayNode newArrayRow = mapAsArray.addArray();
-            row.forEach(column -> newArrayRow.add(column.intValue()));
+            row.forEach(column -> {
+                if (column.equals(PLUS) || column.equals(MINUS) || column.equals(GRASS)) {
+                    newArrayRow.add(GRASS.intValue());
+                } else if (column.equals(WALL)) {
+                    newArrayRow.add(WALL.intValue());
+                }
+            });
         });
         try {
             return mapper.writer().writeValueAsString(rootNode);
@@ -95,12 +113,30 @@ public class Map {
             AtomicInteger colIndexGen = new AtomicInteger();
             row.forEach(column -> {
                 int colIndex = colIndexGen.getAndIncrement();
-                if (column.equals(OBSTACLE)) {
+                if (column.equals(WALL)) {
                     coordinatesOfObstacles.add(new Rectangle(colIndex * tileSize, rowIndex * tileSize, tileSize, tileSize));
                 }
             });
         });
         return coordinatesOfObstacles;
+    }
+
+    private List<PointIndicator> findAllPointIndicators(ArrayList<ArrayList<Long>> map) {
+        List<PointIndicator> plusAndMinus = new ArrayList<>();
+        AtomicInteger rowIndexGen = new AtomicInteger();
+        map.forEach(row -> {
+            int rowIndex = rowIndexGen.getAndIncrement();
+            AtomicInteger colIndexGen = new AtomicInteger();
+            row.forEach(column -> {
+                int colIndex = colIndexGen.getAndIncrement();
+                if (column.equals(PLUS) || column.equals(MINUS)) {
+                    plusAndMinus.add(
+                        new PointIndicator(new Rectangle(colIndex * tileSize, rowIndex * tileSize, tileSize, tileSize), getPointIndicatorType(column))
+                    );
+                }
+            });
+        });
+        return plusAndMinus;
     }
 }
 

@@ -9,8 +9,8 @@ import java.util.Optional;
 import static se.caglabs.hunchback.Map.tileSize;
 
 @Singleton
-@Named("collisionHandler")
-public class CollisionHandler {
+@Named("detectionHandler")
+public class DetectionHandler {
 
     @Inject
     @Named("mapBean")
@@ -77,6 +77,13 @@ public class CollisionHandler {
 
     private boolean isCollisionEastOfCurrentePos(Point inertiaRelPosAndWindDrift, Rectangle collisionResult) {
         return collisionResult.width <= 0 && (inertiaRelPosAndWindDrift.x) > 0;
+    }
+
+    Optional<PointIndicator> touchingPointIndicatorDetection(Point currentPos) {
+        Rectangle currentPosition = new Rectangle(currentPos.x, currentPos.y, tileSize, tileSize);
+        return mapBean.pointIndicators.stream()
+                .filter(pointIndicator -> !pointIndicator.position.intersection(currentPosition).isEmpty())
+                .findFirst();
     }
 }
 
