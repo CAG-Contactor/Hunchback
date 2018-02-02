@@ -8,8 +8,8 @@ import {
 } from '@angular/core';
 import { BackendService } from "../backend.service";
 import { Subscription } from "rxjs/Subscription";
-import { Gubbe } from "../game-model/gubbe";
-import { Scene } from "../game-model/scene";
+import { Gubbe } from "../game-model/shapes/gubbe";
+import { Scene } from "../game-model/shapes/scene";
 
 @Component({
   selector: 'app-game-scene',

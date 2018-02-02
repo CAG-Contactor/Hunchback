@@ -17,17 +17,23 @@ public class Points {
     private int points = 0;
     private static final String MESSAGE_TYPE = "points";
 
+    private GameState stateBean = GameState.getInstance();
+
     @Handler
     public void add(@Body Message message, @Headers Map headers){
-        points += message.getBody(Integer.class);
+        if (stateBean.isStarted()) {
+            points += message.getBody(Integer.class);
+        }
         headers.put("points", points);
         message.setBody(this.toJSON());
     }
 
     @Handler
     public void remove(@Body Message message, @Headers Map headers){
-        points -= message.getBody(Integer.class);
-        points = points < 0 ? 0 : points;
+        if (stateBean.isStarted()) {
+            points -= message.getBody(Integer.class);
+            points = points < 0 ? 0 : points;
+        }
         headers.put("points", points);
         message.setBody(this.toJSON());
     }
