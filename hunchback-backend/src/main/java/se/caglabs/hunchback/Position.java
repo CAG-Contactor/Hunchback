@@ -31,11 +31,6 @@ public class Position {
     @Named("windBean")
     private Wind wind;
 
-    //FIXME: Ta bort sen
-    @Inject
-    @Named("mapBean")
-    private se.caglabs.hunchback.Map mapBean;
-
 //    @Inject
 //    @Named("stateBean")
     private GameState stateBean = GameState.getInstance();
@@ -70,8 +65,8 @@ public class Position {
     public void resetPosition(@Body Message message, @Headers Map headers){
         position = initPosition();
         stateBean.arm();
+        stateBean.resetPointsIndicator(se.caglabs.hunchback.Map.pointIndicators);
         steps.clear();
-        stateBean.resetPointsIndicator(mapBean.pointIndicators);
     }
 
     @Handler
@@ -91,7 +86,7 @@ public class Position {
         Optional<Rectangle> obstacleOptional = detectionHandler.fetchObstacleInCollision(position);
         obstacleOptional.ifPresent(obstacleInCollision -> handleCollision(inertiaRelPos, windDrift, currentPos, obstacleInCollision));
 
-        Optional<PointIndicator> touchedPointIndicatorOptional = detectionHandler.touchingPointIndicatorDetection(currentPos);
+        Optional<PointIndicator> touchedPointIndicatorOptional = detectionHandler.touchPointIndicatorDetection(currentPos, stateBean.getPointIndicators());
         touchedPointIndicatorOptional.ifPresent(this::handleTouching);
 
         WsPosition wsPosition = new WsPosition(position);

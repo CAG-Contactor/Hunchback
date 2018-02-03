@@ -3,7 +3,6 @@ package se.caglabs.hunchback;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.springframework.stereotype.Component;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -13,11 +12,11 @@ import java.util.List;
 @Singleton
 @Named("stateBean")
 public class GameState {
-  public static final long PLAY_TIME = 60L;
-  private static GameState instance = new GameState();
-  public static GameState getInstance() {
+    public static final long PLAY_TIME = 60L;
+    private static GameState instance = new GameState();
+    public static GameState getInstance() {
     return instance;
-  }
+    }
 
     public void resetPointsIndicator(List<PointIndicator> pointIndicators) {
         this.pointIndicators.addAll(pointIndicators);
@@ -29,38 +28,42 @@ public class GameState {
         ARMED
     }
 
-  private Long time = System.currentTimeMillis();
-  private List<PointIndicator> pointIndicators = new ArrayList<>();
-  private State state = State.FINISHED;
+    private Long time = System.currentTimeMillis();
+    private List<PointIndicator> pointIndicators = new ArrayList<>();
+    private State state = State.FINISHED;
 
 
-  public boolean isStarted() {
-    return state.equals(State.RUNNING);
-  }
-
-  public void start() {
-    if (state == State.ARMED) {
-      state = State.RUNNING;
-      time = System.currentTimeMillis();
+    public boolean isStarted() {
+        return state.equals(State.RUNNING);
     }
-  }
 
-  public void arm() {
-    state = State.ARMED;
-  }
-
-  public void tick() {
-    if (state == State.RUNNING) {
-      if (System.currentTimeMillis() - time >= 60 * 1000) {
-        state = State.FINISHED;
-      }
-    } else {
-        time = System.currentTimeMillis();
+    public void start() {
+        if (state == State.ARMED) {
+            state = State.RUNNING;
+            time = System.currentTimeMillis();
+        }
     }
-  }
+
+    public void arm() {
+        state = State.ARMED;
+    }
+
+    public void tick() {
+        if (state == State.RUNNING) {
+            if (System.currentTimeMillis() - time >= 60 * 1000) {
+                state = State.FINISHED;
+            }
+        } else {
+            time = System.currentTimeMillis();
+        }
+    }
 
     void removePointIndicator(PointIndicator pointIndicatorInCollision) {
         this.pointIndicators.remove(pointIndicatorInCollision);
+    }
+
+    public List<PointIndicator> getPointIndicators() {
+        return pointIndicators;
     }
 
     ObjectNode toJSON() {
@@ -80,11 +83,11 @@ public class GameState {
         return rootNode;
     }
 
-  private String getTimeLeftInSeconds() {
-    return "" + (PLAY_TIME - getTimeInSeconds());
-  }
+    private String getTimeLeftInSeconds() {
+        return "" + (PLAY_TIME - getTimeInSeconds());
+    }
 
-  private long getTimeInSeconds() {
-    return state.equals(State.FINISHED) ? PLAY_TIME : ((System.currentTimeMillis() - time)/1000);
-  }
+    private long getTimeInSeconds() {
+        return state.equals(State.FINISHED) ? PLAY_TIME : ((System.currentTimeMillis() - time) / 1000);
+    }
 }

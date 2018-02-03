@@ -26,8 +26,8 @@ import static se.caglabs.hunchback.PointIndicator.getPointIndicatorType;
 @Named("mapBean")
 public class Map {
 
-    List<Rectangle> coordinatesOfObstacles;
-    List<PointIndicator> pointIndicators;
+    static List<Rectangle> coordinatesOfObstacles;
+    static List<PointIndicator> pointIndicators;
     private static final String FILE_NAME_OF_MAP = "map.txt";
     private static final Long WALL = 1L;
     private static final Long GRASS = 0L;

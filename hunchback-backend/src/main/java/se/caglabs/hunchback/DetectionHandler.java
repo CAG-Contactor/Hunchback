@@ -1,6 +1,5 @@
 package se.caglabs.hunchback;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.awt.*;
@@ -10,15 +9,11 @@ import static se.caglabs.hunchback.Map.tileSize;
 
 @Singleton
 @Named("detectionHandler")
-public class DetectionHandler {
-
-    @Inject
-    @Named("mapBean")
-    private Map mapBean;
+class DetectionHandler {
 
     Optional<Rectangle> fetchObstacleInCollision(Point position) {
         Rectangle currentPosition = new Rectangle(position.x,position.y, tileSize, tileSize);
-        return mapBean.coordinatesOfObstacles.stream()
+        return Map.coordinatesOfObstacles.stream()
                 .filter(currentPosition::intersects)
                 .findFirst();
     }
@@ -79,9 +74,9 @@ public class DetectionHandler {
         return collisionResult.width <= 0 && (inertiaRelPosAndWindDrift.x) > 0;
     }
 
-    Optional<PointIndicator> touchingPointIndicatorDetection(Point currentPos) {
+    Optional<PointIndicator> touchPointIndicatorDetection(Point currentPos, java.util.List<PointIndicator> pointIndicators) {
         Rectangle currentPosition = new Rectangle(currentPos.x, currentPos.y, tileSize, tileSize);
-        return mapBean.pointIndicators.stream()
+        return pointIndicators.stream()
                 .filter(pointIndicator -> !pointIndicator.position.intersection(currentPosition).isEmpty())
                 .findFirst();
     }
