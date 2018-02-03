@@ -8,14 +8,13 @@ import org.apache.camel.Handler;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.NotFoundException;
 import java.awt.*;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -82,22 +81,18 @@ public class Map {
 
     @SuppressWarnings("unchecked")
     private ArrayList<ArrayList<Long>> getMapAsListFromFile() {
-        final FileReader fileReader;
-        try {
-            fileReader = new FileReader(new ClassPathResource(FILE_NAME_OF_MAP).getFile().getPath());
-        } catch (IOException e) {
+        try (InputStreamReader fileReader = new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(FILE_NAME_OF_MAP))){
+            JSONParser jsonParser = new JSONParser();
+            JSONArray mapAsJsonArray;
+            try {
+                mapAsJsonArray = (JSONArray) jsonParser.parse(fileReader);
+            } catch (IOException | ParseException e) {
+                throw new Error("Failed to parse file: " + FILE_NAME_OF_MAP, e);
+            }
+            return new ArrayList<ArrayList<Long>>(mapAsJsonArray);
+        } catch (Exception e) {
             throw new NotFoundException("Can not find file: " + FILE_NAME_OF_MAP, e);
         }
-
-        JSONParser jsonParser = new JSONParser();
-        JSONArray mapAsJsonArray;
-        try {
-            mapAsJsonArray = (JSONArray) jsonParser.parse(fileReader);
-        } catch (IOException | ParseException e) {
-            throw new Error("Failed to parse file: " + FILE_NAME_OF_MAP, e);
-        }
-
-        return new ArrayList<ArrayList<Long>>(mapAsJsonArray);
     }
 
     private List<Rectangle> getCoordinatesOfAllObstacles() {
