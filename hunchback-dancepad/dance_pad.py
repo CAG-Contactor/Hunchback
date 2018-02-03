@@ -3,14 +3,14 @@ import threading
 import usb.util
 import sys
 
-arrows = {31: 'up', 47: 'down', 79: 'left', 143: 'right'}
-other = {1: 'Triangle', 2: 'Square', 4: 'X', 8: 'O', 16: 'Select', 32: 'Start'}
+arrows = {31: 'direction/up', 47: 'direction/down', 79: 'direction/left', 143: 'direction/right'}
+other = {1: 'Triangle', 2: 'Square', 4: 'X', 8: 'O', 16: 'Select', 32: 'game/restart'}
 
 
-def send_request(url, direction):
-    if direction:
-        print(direction)
-        resp = requests.get(url.format(direction))
+def send_request(url, action):
+    if action:
+        print(action)
+        resp = requests.get(url.format(action))
         if resp.status_code != 200:
             print('send_request with call: {} failed with status {}'.format(url, resp.status_code))
 
@@ -32,8 +32,10 @@ def read_from_usb(url):
                 if previous != col5:
                     send_request(url, arrows.get(col5))
                     previous = col5
-            #elif col6 != 0:
-                #print(other.get(col6))
+            elif col6 != 0:
+                if col6 == 32:
+                    send_request(url, other.get(col6))
+                    previous = col6
             else:
                 previous = ''
         except usb.core.USBError as e:
@@ -63,6 +65,6 @@ if __name__ == '__main__':
     if options.port is None:
         parser.print_help(sys.stderr)
         sys.exit(1)
-    path = 'http://' + options.url + ':' + str(options.port) + '/direction/{}'
+    path = 'http://' + options.url + ':' + str(options.port) + '/{}'
     main(path)
 
