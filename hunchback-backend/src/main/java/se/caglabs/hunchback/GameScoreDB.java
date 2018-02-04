@@ -1,6 +1,10 @@
 package se.caglabs.hunchback;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -13,12 +17,16 @@ import org.bson.Document;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Named("gameScoreBean")
 public class GameScoreDB {
+
+    private static final String MESSAGE_TYPE = "HighScores";
 
     // Sätta upp MongoDB lokalt för test:
     // Installera MongoDB på Mac: brew install MongoDB
@@ -40,17 +48,26 @@ public class GameScoreDB {
             Document bsonScoreCard = iterator.next();
             scoreCards.add(new ScoreCard(bsonScoreCard.getString("userName"), bsonScoreCard.getInteger("score")));
         }
-        message.setBody(toJSON(scoreCards));
+        List<ScoreCard> sortedScoreCards = scoreCards.stream()
+                .sorted(Comparator.comparingInt(ScoreCard::getScore).reversed()).collect(Collectors.toList());
+        message.setBody(toJSON(sortedScoreCards));
     }
 
     private String toJSON(List<ScoreCard> scoreCards) {
-        // TODO:
-//        ObjectMapper objectMapper = new ObjectMapper();
-        StringBuilder s = new StringBuilder();
-         scoreCards.forEach(sc -> s.append(sc.toJSON()).append(","));
-         if (s.length() > 0)
-        s.deleteCharAt(s.length()-1);
-        return "[" + s + "]";
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode rootNode = mapper.createObjectNode();
+        rootNode.put("messageType", MESSAGE_TYPE);
+        ArrayNode mapAsArray = rootNode.putArray("highScores");
+        rootNode.put("highScores", mapAsArray);
+        scoreCards.forEach(sc -> mapAsArray.add(sc.toJSONNode()));
+
+        try {
+            return mapper.writer().writeValueAsString(rootNode);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "";
+        }
+
     }
 
     private MongoCollection<Document> getScoreCollection() {

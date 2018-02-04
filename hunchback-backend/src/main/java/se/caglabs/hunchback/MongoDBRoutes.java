@@ -1,5 +1,6 @@
 package se.caglabs.hunchback;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +25,15 @@ public class MongoDBRoutes extends RouteBuilder {
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
                 .setHeader("Access-Control-Allow-Origin", constant("*"))
                 .bean(gameScoreBean, "getScores");
-        from("restlet:http://0.0.0.0:8080/score/add")
+        from("restlet:http://0.0.0.0:8080/score/add?restletMethods=POST")
                 .routeId("scores-add-rest")
                 .setHeader("Access-Control-Allow-Headers", constant("Content-Type"))
                 .setHeader("Access-Control-Allow-Origin", constant("*"))
-                .process((exchange -> exchange.getOut().setBody(new ScoreCard((String) exchange.getIn().getHeader("userName"), Integer.parseInt((String) exchange.getIn().getHeader("score"))))))
+                .process((exchange -> {
+                    ObjectMapper mapper = new ObjectMapper();
+                    ScoreCard scoreCard = mapper.readValue(exchange.getIn().getBody(String.class), ScoreCard.class);
+                    exchange.getIn().setBody(scoreCard);
+                }))
                 .bean(gameScoreBean, "addScore");
 
 //        MongoClient mongoClient = new MongoClient("127.0.0.1", 27017);

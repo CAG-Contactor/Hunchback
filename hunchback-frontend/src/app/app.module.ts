@@ -1,6 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import {FormsModule} from "@angular/forms";
+
 import {
   FusionChartsModule
 } from 'angular4-fusioncharts';
@@ -27,6 +29,7 @@ import { WaterIndicatorComponent } from './water-indicator/water-indicator.compo
   imports: [
     BrowserModule,
     HttpClientModule,
+    FormsModule,
     FusionChartsModule.forRoot(FusionCharts, Charts, FintTheme)
   ],
   providers: [BackendService],

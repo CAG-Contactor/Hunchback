@@ -14,6 +14,9 @@ public class ScoreCard {
 
     private int score;
 
+    public ScoreCard() {
+    }
+
     public ScoreCard(java.util.Map<String, Object> bsonMap) {
         this((String) bsonMap.get("userName"), (Integer) bsonMap.get("score"));
     }
@@ -51,6 +54,15 @@ public class ScoreCard {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public ObjectNode toJSONNode() {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode rootNode = mapper.createObjectNode();
+        rootNode.put("messageType", MESSAGE_TYPE);
+        rootNode.put("userName", userName);
+        rootNode.put("score", score);
+        return rootNode;
     }
 
     public Document toBSON() {
