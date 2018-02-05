@@ -66,13 +66,15 @@ public class GameState {
     }
 
     void removePointIndicator(PointIndicator pointIndicatorInCollision) {
-        if (pointIndicatorInCollision.pointIndicatorType.equals("PLUS")) {
-            points += 100;
-        } else {
-            points -= 150;
-            points = points < 0 ? 0 : points;
-        }
         this.pointIndicators.remove(pointIndicatorInCollision);
+        if (state == State.RUNNING) {
+            if (pointIndicatorInCollision.pointIndicatorType.equals("PLUS")) {
+                points += 100;
+            } else {
+                points -= 150;
+                points = points < 0 ? 0 : points;
+            }
+        }
     }
 
     public List<PointIndicator> getPointIndicators() {
