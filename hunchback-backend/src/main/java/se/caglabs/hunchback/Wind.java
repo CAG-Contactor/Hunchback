@@ -25,11 +25,16 @@ public class Wind {
     double windSpeed = (double) headers.get("windSpeed");
     String direction = directions[(int) Math.round(windDirection / 45.0) % 8];
     setDrift(direction,windSpeed);
+    this.windDirection = direction;
 
   }
 
   public Point getDrift(){
     return drift;
+  }
+
+  public String getWindDirection() {
+    return windDirection;
   }
 
   private void setDrift(String direction, double windSpeed) {

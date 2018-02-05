@@ -13,6 +13,7 @@ import { GridMap } from '../game-model/shapes/gridmap';
 import { Gubbe } from '../game-model/shapes/gubbe';
 import { PointIndicators } from '../game-model/shapes/point-indicators';
 import { Scene } from '../game-model/shapes/scene';
+import { WindIndicator } from '../game-model/shapes/wind-indicator';
 
 @Component({
   selector: 'app-game-grid',
@@ -27,6 +28,7 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
   private bgScene: Scene; // Background scene
   private iaScene: Scene; // Interactive scene
   private gubbe: Gubbe;
+  private windIndicator: WindIndicator;
   private gridMap: GridMap;
   private tileSetImage: HTMLImageElement;
   private pointIndicators: PointIndicators;
@@ -42,6 +44,7 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
     this.iaScene = new Scene(iaCanvas.getContext('2d'), this.gridMap.height, this.gridMap.width);
     this.gubbe = new Gubbe(this.gridMap.tileSize);
     this.pointIndicators = new PointIndicators();
+    this.windIndicator = new WindIndicator(370, 570);
     this.subscribeToUpdates();
   }
 
@@ -69,12 +72,10 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   renderView() {
-    // Clear scene
     this.iaScene.clear();
-    // Render point indicators
     this.pointIndicators.renderOn(this.iaScene);
-    // Render dude
     this.gubbe.renderOn(this.iaScene);
+    this.windIndicator.renderOn(this.iaScene);
   }
 
   resizeCanvas(): void {
@@ -112,6 +113,7 @@ export class GameGridComponent implements OnInit, AfterViewInit, OnDestroy {
           const moags = m as MotherOfAllGameStates;
 
           // Update game state
+          this.windIndicator.setWindDirection(moags.wind.windDirection);
           this.gubbe.moveTo(moags.position.x, moags.position.y);
           this.pointIndicators.update(moags.gameState.pointIndicators);
           // Render view

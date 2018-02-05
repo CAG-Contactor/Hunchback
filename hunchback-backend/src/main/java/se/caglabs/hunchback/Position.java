@@ -146,6 +146,7 @@ public class Position {
             Point windDrift = wind.getDrift();
             windNode.put("x", windDrift.x);
             windNode.put("y", windDrift.y);
+            windNode.put("windDirection", wind.getWindDirection());
             rootNode.set("wind", windNode);
 
             ObjectNode inertiaNode = mapper.createObjectNode();

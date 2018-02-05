@@ -5,6 +5,7 @@ export interface MotherOfAllGameStates {
   wind: {
     x: number;
     y: number;
+    windDirection: string;
   }
   inertia: {
     x: number;
