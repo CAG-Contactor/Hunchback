@@ -2,7 +2,9 @@ import {
   Component,
   ElementRef,
   Input,
+  OnChanges,
   OnInit,
+  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import * as _ from 'lodash';
@@ -14,7 +16,7 @@ import { ScoreCard } from '../game-model/score-card';
   templateUrl: './game-score.component.html',
   styleUrls: ['./game-score.component.scss']
 })
-export class GameScoreComponent implements OnInit {
+export class GameScoreComponent implements OnInit, OnChanges {
   @Input()
   points: number;
   @ViewChild('nameInput')
@@ -22,6 +24,7 @@ export class GameScoreComponent implements OnInit {
 
   highScores: ScoreCard[] = [];
   scoreCard: ScoreCard;
+  scoreRegistered: boolean = false;
 
   constructor(private readonly backendService: BackendService) {
     this.initHighScoreList();
@@ -46,6 +49,7 @@ export class GameScoreComponent implements OnInit {
             .subscribe(m => {
               if (m.messageType === 'HighScores') {
                 this.initHighScoreList(m);
+                scoreRegistered = true;
               }
             });
         },
