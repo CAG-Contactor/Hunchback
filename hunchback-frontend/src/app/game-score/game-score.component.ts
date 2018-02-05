@@ -8,15 +8,15 @@ import {
   ViewChild
 } from '@angular/core';
 import * as _ from 'lodash';
-import { BackendService } from '../backend.service';
-import { ScoreCard } from '../game-model/score-card';
+import {BackendService} from '../backend.service';
+import {ScoreCard} from '../game-model/score-card';
 
 @Component({
   selector: 'app-game-score',
   templateUrl: './game-score.component.html',
   styleUrls: ['./game-score.component.scss']
 })
-export class GameScoreComponent implements OnInit, OnChanges {
+export class GameScoreComponent implements OnInit {
   @Input()
   points: number;
   @ViewChild('nameInput')
@@ -33,7 +33,7 @@ export class GameScoreComponent implements OnInit, OnChanges {
   newScoreCard() {
     this.scoreCard = {
       userName: '',
-      score: this.points
+      score: `${this.points}`
     };
     setTimeout(() => {
       this.nameInput.nativeElement.focus(), 100;
@@ -49,7 +49,7 @@ export class GameScoreComponent implements OnInit, OnChanges {
             .subscribe(m => {
               if (m.messageType === 'HighScores') {
                 this.initHighScoreList(m);
-                scoreRegistered = true;
+                this.scoreRegistered = true;
               }
             });
         },
@@ -69,10 +69,10 @@ export class GameScoreComponent implements OnInit, OnChanges {
       });
   }
 
-  private initHighScoreList(m?:any) {
+  private initHighScoreList(m?: any) {
     this.highScores = m && m.highScores || [];
     _.times(9 - this.highScores.length, () => this.highScores.push({userName: '---', score: '---'}));
-    this.highScores = this.highScores.slice(0,9);
+    this.highScores = this.highScores.slice(0, 9);
   }
 
 }

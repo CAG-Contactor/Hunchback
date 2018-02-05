@@ -9,7 +9,7 @@
         </div>
       </div>
     </div>
-    <button *ngIf="!§scoreRegistered" (click)="newScoreCard()">Register score</button>
+    <button *ngIf="!scoreRegistered" (click)="newScoreCard()">Register score</button>
   </div>
   <div *ngIf="scoreCard" class="score-input">
     <div>SCORE: {{scoreCard.score}}</div>
