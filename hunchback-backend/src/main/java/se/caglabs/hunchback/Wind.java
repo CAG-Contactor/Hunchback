@@ -13,7 +13,7 @@ import java.util.Map;
 @Singleton
 @Named("windBean")
 public class Wind {
-  private static final String directions[] = {"S", "SW", "W", "NW", "N", "NE", "E", "SE"};
+  private static final String directions[] = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 
   private String windDirection;
   private Point drift = new Point(0,0);
