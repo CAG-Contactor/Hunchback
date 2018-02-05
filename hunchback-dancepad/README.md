@@ -9,4 +9,4 @@
 
 ## Running
 
-  python3 dance_pad_threading.py -u hostname -p 8080
+  python3 dance_pad.py -u hostname -p 8080
