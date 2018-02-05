@@ -32,6 +32,10 @@ public class HunchbackRoutes extends RouteBuilder {
     @Named("stateBean")
     private Object stateBean;
 
+    @Inject
+    @Named("pointsBean")
+    private Object pointsBean;
+
     private IssPositionProcessor issPositionProcessor = new IssPositionProcessor();
     private PositionToPlaceProcessor positionToPlaceProcessor = new PositionToPlaceProcessor();
     private WeatherProcessor weatherProcessor = new WeatherProcessor();
@@ -140,21 +144,21 @@ public class HunchbackRoutes extends RouteBuilder {
         from("jms:queue:addPoints")
                 .routeId("add-points-queue")
                 .log("From JMS:${body}")
-                .bean(stateBean, "add")
+                .bean(pointsBean, "add")
                 .log("Points:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:removePoints")
                 .routeId("remove-points-queue")
                 .log("From JMS removeWater:${body}")
-                .bean(stateBean, "remove")
+                .bean(pointsBean, "remove")
                 .log("points:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:resetPoints")
                 .routeId("reset-points-queue")
                 .log("points:${headers.points}")
-                .bean(stateBean, "reset")
+                .bean(pointsBean, "reset")
                 .log("points reset:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 

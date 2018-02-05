@@ -19,12 +19,11 @@ import java.util.Map;
 public class GameState {
     public static final long PLAY_TIME = 60L;
     private static GameState instance = new GameState();
+    static int points = 0;
 
     public static GameState getInstance() {
         return instance;
     }
-
-    private int points = 0;
 
     public void resetPointsIndicator(List<PointIndicator> pointIndicators) {
         this.pointIndicators.addAll(pointIndicators);
@@ -78,32 +77,6 @@ public class GameState {
 
     public List<PointIndicator> getPointIndicators() {
         return pointIndicators;
-    }
-
-    @Handler
-    public void add(@Body Message message, @Headers java.util.Map headers) {
-        if (isStarted()) {
-            points += message.getBody(Integer.class);
-        }
-        headers.put("points", points);
-        message.setBody(this.toJSON());
-    }
-
-    @Handler
-    public void remove(@Body Message message, @Headers java.util.Map headers) {
-        if (isStarted()) {
-            points -= message.getBody(Integer.class);
-            points = points < 0 ? 0 : points;
-        }
-        headers.put("points", points);
-        message.setBody(this.toJSON());
-    }
-
-    @Handler
-    public void reset(@Body Message message, @Headers Map headers) {
-        this.points = 0;
-        headers.put("points", points);
-        message.setBody(this.toJSON());
     }
 
     ObjectNode toJSON() {

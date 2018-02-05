@@ -69,6 +69,7 @@ export class AppComponent implements OnInit {
               this.message = undefined;
           }
         }
+        if (m.messageType === 'points') this.points = m.points;
       });
   }
 
