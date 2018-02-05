@@ -1,5 +1,5 @@
 export interface ScoreCard {
-  messageType: string,
+  // messageType: string,
   userName: string,
   score: number
 }
