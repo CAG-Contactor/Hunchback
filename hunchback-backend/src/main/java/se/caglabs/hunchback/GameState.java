@@ -3,20 +3,28 @@ package se.caglabs.hunchback;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.camel.Body;
+import org.apache.camel.Handler;
+import org.apache.camel.Headers;
+import org.apache.camel.Message;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
 @Named("stateBean")
 public class GameState {
     public static final long PLAY_TIME = 60L;
     private static GameState instance = new GameState();
+
     public static GameState getInstance() {
-    return instance;
+        return instance;
     }
+
+    private int points = 0;
 
     public void resetPointsIndicator(List<PointIndicator> pointIndicators) {
         this.pointIndicators.addAll(pointIndicators);
@@ -59,6 +67,12 @@ public class GameState {
     }
 
     void removePointIndicator(PointIndicator pointIndicatorInCollision) {
+        if (pointIndicatorInCollision.pointIndicatorType.equals("PLUS")) {
+            points += 100;
+        } else {
+            points -= 150;
+            points = points < 0 ? 0 : points;
+        }
         this.pointIndicators.remove(pointIndicatorInCollision);
     }
 
@@ -66,11 +80,38 @@ public class GameState {
         return pointIndicators;
     }
 
+    @Handler
+    public void add(@Body Message message, @Headers java.util.Map headers) {
+        if (isStarted()) {
+            points += message.getBody(Integer.class);
+        }
+        headers.put("points", points);
+        message.setBody(this.toJSON());
+    }
+
+    @Handler
+    public void remove(@Body Message message, @Headers java.util.Map headers) {
+        if (isStarted()) {
+            points -= message.getBody(Integer.class);
+            points = points < 0 ? 0 : points;
+        }
+        headers.put("points", points);
+        message.setBody(this.toJSON());
+    }
+
+    @Handler
+    public void reset(@Body Message message, @Headers Map headers) {
+        this.points = 0;
+        headers.put("points", points);
+        message.setBody(this.toJSON());
+    }
+
     ObjectNode toJSON() {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode rootNode = mapper.createObjectNode();
         rootNode.put("state", state.name());
         rootNode.put("time", getTimeLeftInSeconds());
+        rootNode.put("points", points);
         ArrayNode pointIndicatorsAsArrayNode = rootNode.putArray("pointIndicators");
 
         pointIndicators.forEach(pointIndicator -> {

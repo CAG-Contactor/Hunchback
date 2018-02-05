@@ -56,6 +56,7 @@ export class AppComponent implements OnInit {
       .subscribe(m => {
         if (m.messageType === 'Position') {
           const moags: MotherOfAllGameStates = m as MotherOfAllGameStates;
+          this.points = moags.gameState.points;
           this.secondsLeft = moags.gameState.time;
           switch(moags.gameState.state) {
             case 'FINISHED':
@@ -68,7 +69,6 @@ export class AppComponent implements OnInit {
               this.message = undefined;
           }
         }
-        if (m.messageType === 'points') this.points = m.points;
       });
   }
 

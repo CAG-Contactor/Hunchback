@@ -19,9 +19,6 @@ import javax.jms.ConnectionFactory;
 @Component
 public class HunchbackRoutes extends RouteBuilder {
     @Inject
-    @Named("pointsBean")
-    private Object pointsBean;
-    @Inject
     @Named("positionBean")
     private Object position;
     @Inject
@@ -143,21 +140,21 @@ public class HunchbackRoutes extends RouteBuilder {
         from("jms:queue:addPoints")
                 .routeId("add-points-queue")
                 .log("From JMS:${body}")
-                .bean(pointsBean, "add")
+                .bean(stateBean, "add")
                 .log("Points:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:removePoints")
                 .routeId("remove-points-queue")
                 .log("From JMS removeWater:${body}")
-                .bean(pointsBean, "remove")
+                .bean(stateBean, "remove")
                 .log("points:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 
         from("jms:queue:resetPoints")
                 .routeId("reset-points-queue")
                 .log("points:${headers.points}")
-                .bean(pointsBean, "reset")
+                .bean(stateBean, "reset")
                 .log("points reset:${headers.points}")
                 .to("websocket:hunchback?sendToAll=true");
 

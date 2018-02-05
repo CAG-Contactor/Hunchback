@@ -1,3 +1,4 @@
+/*
 package se.caglabs.hunchback;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class Points {
     private int points = 0;
     private static final String MESSAGE_TYPE = "points";
+
 
     private GameState stateBean = GameState.getInstance();
 
@@ -59,3 +61,4 @@ public class Points {
     }
 
 }
+*/
