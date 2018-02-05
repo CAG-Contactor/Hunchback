@@ -5,7 +5,7 @@
   </div>
   <div class="push"></div>
 </div>
-<div><app-game-score></app-game-score></div>
+<app-game-score *ngIf="gameOver" [points]="points"></app-game-score>
 <footer class="footer">
   <div class="points">
     <div class="container">

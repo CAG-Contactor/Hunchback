@@ -8,4 +8,22 @@
   color: white;
   font-size: 48px;
   text-shadow: 0 0 6px white;
+  button {
+    cursor: pointer;
+    color: red;
+    background-color: white;
+    border: none;
+  }
+  input {
+    margin: 10px;
+    border: none;
+    caret-color: white;
+    text-align: center;
+    background-color: transparent;
+    color: white;
+  }
+  .score-input {
+    padding: 10px;
+    background-color: blue;
+  }
 }

@@ -1,20 +1,21 @@
 <div class="game-score-container">
-  <div class="messages-wrapper">High scores</div>
-  <div class="container-fluid">
-    <div *ngFor="let highScore of highScores">
-      <div class="row">
-        <div class="col-sm-6">{{highScore.userName}}, {{highScore.score}}</div>
-        <div class="col-sm-3">{{highScore.score}}</div>
+  <div *ngIf="!scoreCard">
+    <div class="messages-wrapper">High scores</div>
+    <div class="container-fluid">
+      <div *ngFor="let highScore of highScores">
+        <div class="row">
+          <div class="col-sm-6">{{highScore.userName}}</div>
+          <div class="col-sm-6">{{highScore.score}}</div>
+        </div>
       </div>
     </div>
+    <button (click)="newScoreCard()">Register score</button>
   </div>
-  <div (click)="newScoreCard()">Register score</div>
-
-  <div *ngIf="scoreCard">
-    <label>Nick:
-      <input [(ngModel)]="scoreCard.userName">
-      <input [(ngModel)]="scoreCard.score"><br>
-      <button (click)="sendScoreCard()">Skicka</button>
-    </label>
+  <div *ngIf="scoreCard" class="score-input">
+    <div>SCORE: {{scoreCard.score}}</div>
+    NAME: <input #nameInput
+                 [(ngModel)]="scoreCard.userName"
+                 (keyup.enter)="sendScoreCard()">
+    <button (click)="sendScoreCard()">Skicka</button>
   </div>
 </div>

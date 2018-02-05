@@ -1,22 +1,13 @@
 import {
   Component,
-  OnInit
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild
 } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import * as _ from 'lodash';
 import { BackendService } from '../backend.service';
 import { ScoreCard } from '../game-model/score-card';
-
-// export interface ScoreCard {
-//   messageType: string,
-//   userName: string,
-//   score: number
-// }
-//
-// export interface HighScores {
-//   messageType: string,
-//   highScores: ScoreCard[]
-//
-// }
 
 @Component({
   selector: 'app-game-score',
@@ -24,19 +15,26 @@ import { ScoreCard } from '../game-model/score-card';
   styleUrls: ['./game-score.component.scss']
 })
 export class GameScoreComponent implements OnInit {
-  subscription: Subscription;
-  highScores: ScoreCard[];
+  @Input()
+  points: number;
+  @ViewChild('nameInput')
+  nameInput: ElementRef;
 
+  highScores: ScoreCard[] = [];
   scoreCard: ScoreCard;
 
   constructor(private readonly backendService: BackendService) {
+    this.initHighScoreList();
   }
 
   newScoreCard() {
     this.scoreCard = {
       userName: '',
-      score: 0
+      score: this.points
     };
+    setTimeout(() => {
+      this.nameInput.nativeElement.focus(), 100;
+    });
   }
 
   sendScoreCard() {
@@ -47,7 +45,7 @@ export class GameScoreComponent implements OnInit {
           this.backendService.getHighScores()
             .subscribe(m => {
               if (m.messageType === 'HighScores') {
-                this.highScores = m.highScores;
+                this.initHighScoreList(m);
               }
             });
         },
@@ -62,9 +60,15 @@ export class GameScoreComponent implements OnInit {
     this.backendService.getHighScores()
       .subscribe(m => {
         if (m.messageType === 'HighScores') {
-          this.highScores = m.highScores;
+          this.initHighScoreList(m);
         }
       });
+  }
+
+  private initHighScoreList(m?:any) {
+    this.highScores = m && m.highScores || [];
+    _.times(9 - this.highScores.length, () => this.highScores.push({userName: '---', score: '---'}));
+    this.highScores = this.highScores.slice(0,9);
   }
 
 }
