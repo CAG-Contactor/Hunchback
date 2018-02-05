@@ -43,6 +43,7 @@ public class Position {
     private double stepFrequency;
     private Point position = initPosition();
     private SortedMap<Long, String> steps = new TreeMap<>();
+    private Point latestCollisionCoordinates = new Point();
 
     private Point initPosition() {
         return new Point(370, 304);
@@ -82,9 +83,17 @@ public class Position {
             position.y = position.y + inertiaRelPos.y + windDrift.y;
         }
 
+        // remove wind
+        if (latestCollisionCoordinates.x == currentPos.x && latestCollisionCoordinates.y == currentPos.y) {
+            position.x = position.x - windDrift.x;
+            position.y = position.y - windDrift.y;
+        }
+
         // Hämtar det hinder vi krockar med utifrån position.x och position.y ifall vi krockar
         Optional<Rectangle> obstacleOptional = detectionHandler.fetchObstacleInCollision(position);
-        obstacleOptional.ifPresent(obstacleInCollision -> handleCollision(inertiaRelPos, windDrift, currentPos, obstacleInCollision));
+        if (obstacleOptional.isPresent()) {
+            handleCollision(inertiaRelPos, windDrift, currentPos, obstacleOptional.get());
+        }
 
         Optional<PointIndicator> touchedPointIndicatorOptional = detectionHandler.touchPointIndicatorDetection(currentPos, stateBean.getPointIndicators());
         touchedPointIndicatorOptional.ifPresent(this::handleTouching);
@@ -105,6 +114,8 @@ public class Position {
 
         // Hämtar position närmast det hindret vi krockar för att undvika att vi "går igenom" hindret.
         Point posClosestToObstacle = detectionHandler.fetchPositionClosestToObstacle(currentPosWithOutWindAndSpeed, obstacleInCollision, inertiaRelPosAndWindDrift, position);
+        this.latestCollisionCoordinates.x = posClosestToObstacle.x;
+        this.latestCollisionCoordinates.y = posClosestToObstacle.y;
         position.x = posClosestToObstacle.x;
         position.y = posClosestToObstacle.y;
     }
