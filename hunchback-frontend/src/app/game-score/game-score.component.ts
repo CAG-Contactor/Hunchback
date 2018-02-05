@@ -32,10 +32,25 @@ export class GameScoreComponent implements OnInit {
 
   newScoreCard() {
     this.scoreCard = {
-      messageType: "Score",
       userName: "",
       score: 0
     };
+  }
+
+  sendScoreCard() {
+    this.backendService.addScore(this.scoreCard).subscribe(res => {
+      this.scoreCard = undefined;
+      this.backendService.getHighScores().subscribe(m => {
+        if (m.messageType === 'HighScores') {
+          this.highScores = m.highScores;
+        }
+      });
+      },
+      err => {
+      console.error(err);
+      }
+    );
+
   }
 
   ngOnInit(): void {

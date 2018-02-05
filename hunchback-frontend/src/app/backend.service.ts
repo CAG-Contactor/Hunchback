@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {
   Inject,
   Injectable
@@ -107,7 +107,8 @@ export class BackendService {
   }
 
   addScore(score: ScoreCard) {
-    this.httpClient.post(`http://${this.backendServer}:${this.port}/score/add`, score)
+    // have to use GET, since POST doesn't seem to be allowed under Access-Control-Allow-Origin
+    return this.httpClient.get(`http://${this.backendServer}:${this.port}/score/add?userName=${score.userName}&score=${score.score}`)
   }
 
 

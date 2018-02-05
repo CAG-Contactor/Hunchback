@@ -38,6 +38,7 @@ public class GameScoreDB {
     public void addScore(@Body Message message, @Headers Map headers) {
         ScoreCard score = message.getBody(ScoreCard.class);
         getScoreCollection().insertOne(score.toBSON());
+        message.setBody("{}");
     }
 
     @Handler
@@ -57,9 +58,9 @@ public class GameScoreDB {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode rootNode = mapper.createObjectNode();
         rootNode.put("messageType", MESSAGE_TYPE);
-        ArrayNode mapAsArray = rootNode.putArray("highScores");
-        rootNode.put("highScores", mapAsArray);
-        scoreCards.forEach(sc -> mapAsArray.add(sc.toJSONNode()));
+        ArrayNode highScores = rootNode.putArray("highScores");
+        rootNode.put("highScores", highScores);
+        scoreCards.forEach(sc -> highScores.add(sc.toJSONNode()));
 
         try {
             return mapper.writer().writeValueAsString(rootNode);
