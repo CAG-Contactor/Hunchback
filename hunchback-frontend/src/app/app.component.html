@@ -12,13 +12,6 @@
       <div class="row">
         <div class="col-sm-6">{{points}}</div>
         <div class="col-sm-6">{{secondsLeft}}</div>
-        <!--<fusioncharts-->
-          <!--[width]="50"-->
-          <!--[height]="50"-->
-          <!--[type]="angulargauge"-->
-          <!--[dataFormat]="json"-->
-          <!--[dataSource]="chart"-->
-        <!--&gt;</fusioncharts>-->
       </div>
     </div>
   </div>
@@ -26,7 +19,7 @@
     <div class="pull-right">
       <i class="fa" [ngClass]="{'fa-toggle-on': status === 'Connected', 'fa-toggle-off': status !== 'Connected'}"></i>
       <button type="button" class="btn btn-sm btn-outline-light margin-left" (click)="restartGame()">
-        <i class="fa fa-repeat"></i>&nbsp;Starta om spelet
+        <i class="fa fa-repeat"></i>&nbsp;Insert coin
       </button>
     </div>
   </div>
