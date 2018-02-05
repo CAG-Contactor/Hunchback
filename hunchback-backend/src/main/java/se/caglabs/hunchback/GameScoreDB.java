@@ -51,6 +51,9 @@ public class GameScoreDB {
         }
         List<ScoreCard> sortedScoreCards = scoreCards.stream()
                 .sorted(Comparator.comparingInt(ScoreCard::getScore).reversed()).collect(Collectors.toList());
+        if (sortedScoreCards.size() > 10) {
+            sortedScoreCards = sortedScoreCards.subList(0, 10);
+        }
         message.setBody(toJSON(sortedScoreCards));
     }
 
