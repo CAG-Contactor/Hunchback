@@ -58,13 +58,14 @@ export class AppComponent implements OnInit {
           const moags: MotherOfAllGameStates = m as MotherOfAllGameStates;
           this.points = moags.gameState.points;
           this.secondsLeft = moags.gameState.time;
-          switch(moags.gameState.state) {
+          switch (moags.gameState.state) {
             case 'FINISHED':
               this.message = 'GAME OVER';
               this.gameOver = true;
               break;
             case 'ARMED':
               this.message = 'READY PLAYER ONE';
+              this.gameOver = false;
               break;
             default:
               this.gameOver = false;
@@ -78,42 +79,42 @@ export class AppComponent implements OnInit {
 }
 
 const chartDef = {
-  "chart": {
-    "caption": "Customer Satisfaction Score",
-    "subcaption": "Last week",
-    "gaugeStartAngle": "0",
-    "gaugeEndAngle": "90",
-    "lowerLimit": "0",
-    "upperLimit": "100",
-    "gaugeFillMix": "{dark-40},{light-40},{dark-20}",
-    "theme": "fint"
+  'chart': {
+    'caption': 'Customer Satisfaction Score',
+    'subcaption': 'Last week',
+    'gaugeStartAngle': '0',
+    'gaugeEndAngle': '90',
+    'lowerLimit': '0',
+    'upperLimit': '100',
+    'gaugeFillMix': '{dark-40},{light-40},{dark-20}',
+    'theme': 'fint'
   },
-  "colorRange": {
-    "color": [
+  'colorRange': {
+    'color': [
       {
-        "minValue": "0",
-        "maxValue": "50",
-        "code": "#e44a00"
+        'minValue': '0',
+        'maxValue': '50',
+        'code': '#e44a00'
       },
       {
-        "minValue": "50",
-        "maxValue": "75",
-        "code": "#f8bd19"
+        'minValue': '50',
+        'maxValue': '75',
+        'code': '#f8bd19'
       },
       {
-        "minValue": "75",
-        "maxValue": "100",
-        "code": "#6baa01"
+        'minValue': '75',
+        'maxValue': '100',
+        'code': '#6baa01'
       }
     ]
   },
-  "dials": {
-    "dial": [
+  'dials': {
+    'dial': [
       {
-        "value": "67",
-        "radius": "140",
-        "rearExtension": "15"
+        'value': '67',
+        'radius': '140',
+        'rearExtension': '15'
       }
     ]
   }
-}
+};

@@ -8,10 +8,10 @@ $footer-height: $status-bar-height+$points-bar-height;
   text-align: center;
   z-index: 100;
   width: 100%;
-  top: 80px;
+  top: 300px;
   font-family: Led7Segment;
   color: red;
-  font-size: 128px;
+  font-size: 64px;
   text-shadow: 0 0 6px #ff4e00;
 }
 
@@ -52,6 +52,6 @@ $footer-height: $status-bar-height+$points-bar-height;
 }
 
 @keyframes blinker {
-  from { opacity: 1; }
+  from { opacity: .6; }
   to { opacity: 0; }
 }
