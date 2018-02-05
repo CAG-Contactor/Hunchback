@@ -3,7 +3,7 @@ $points-bar-height: 150px;
 $footer-height: $status-bar-height+$points-bar-height;
 
 .game-message {
-  animation: blinker 1.7s cubic-bezier(.5, 0, 1, 1) infinite alternate;
+  animation: blinker 1s cubic-bezier(.5, 0, 1, 1) infinite alternate;
   position: fixed;
   text-align: center;
   z-index: 100;
@@ -51,4 +51,7 @@ $footer-height: $status-bar-height+$points-bar-height;
   }
 }
 
-@keyframes blinker { to { opacity: 0; } }
+@keyframes blinker {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

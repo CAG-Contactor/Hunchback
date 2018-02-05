@@ -50,7 +50,7 @@ public class GameState {
 
     public void tick() {
         if (state == State.RUNNING) {
-            if (System.currentTimeMillis() - time >= 60 * 1000) {
+            if (System.currentTimeMillis() - time >= PLAY_TIME * 1000) {
                 state = State.FINISHED;
             }
         } else {

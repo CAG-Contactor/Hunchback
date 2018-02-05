@@ -1,29 +1,27 @@
-import requests
-import threading
 import usb.util
-import sys
+import requests
+import time
+
 
 arrows = {31: 'direction/up', 47: 'direction/down', 79: 'direction/left', 143: 'direction/right'}
 other = {1: 'Triangle', 2: 'Square', 4: 'X', 8: 'O', 16: 'Select', 32: 'game/restart'}
 
-
 def send_request(url, action):
-    if action:
-        resp = requests.get(url.format(action))
-        if resp.status_code != 200:
-            print('send_request with call: {} failed with status {}'.format(url, resp.status_code))
-        else:
-            print(resp.text)
+    print(url.format(action))
+    resp = requests.get(url.format(action))
+    if resp.status_code != 200:
+        # This means something went wrong.
+        raise ApiError('GET /tasks/ {}'.format(resp.status_code))
 
-
-def read_from_usb(url):
+def main(path):
     dev = usb.core.find(idVendor=0x79, idProduct=0x11)
     interface = 0
-    endpoint = dev[0][(0, 0)][0]
+    endpoint = dev[0][(0,0)][0]
     previous = ''
+
     if dev.is_kernel_driver_active(interface) is True:
-        dev.detach_kernel_driver(interface)
-        usb.util.claim_interface(dev, interface)
+      dev.detach_kernel_driver(interface)
+      usb.util.claim_interface(dev, interface)
     while True:
         try:
             data = dev.read(endpoint.bEndpointAddress,endpoint.wMaxPacketSize)
@@ -31,11 +29,12 @@ def read_from_usb(url):
             col6 = data[6]
             if col5 != 15:
                 if previous != col5:
-                    send_request(url, arrows.get(col5))
+                    print(arrows.get(col5))
+                    send_request(path, arrows.get(col5))
                     previous = col5
             elif col6 != 0:
                 if col6 == 32:
-                    send_request(url, other.get(col6))
+                    send_request(path, other.get(col6))
                     previous = col6
             else:
                 previous = ''
@@ -43,13 +42,9 @@ def read_from_usb(url):
             data = None
             if e.args == ('Operation timed out',):
                 continue
+
     usb.util.release_interface(dev, interface)
     dev.attach_kernel_driver(interface)
-
-
-def main(path):
-    thread = threading.Thread(target=read_from_usb, args=(path,))
-    thread.start()
 
 
 if __name__ == '__main__':

@@ -1,0 +1,11 @@
+.game-score-container {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  text-align: center;
+  z-index: 200;
+  font-family: Led7Segment;
+  color: white;
+  font-size: 48px;
+  text-shadow: 0 0 6px white;
+}

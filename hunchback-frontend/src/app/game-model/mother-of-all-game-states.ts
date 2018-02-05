@@ -5,6 +5,7 @@ export interface MotherOfAllGameStates {
   wind: {
     x: number;
     y: number;
+    windDirection: string;
   }
   inertia: {
     x: number;
@@ -17,4 +18,5 @@ export interface MotherOfAllGameStates {
     state: 'FINISHED' | 'ARMED' | 'RUNNING';
     pointIndicators: PointIndicator[];
   }
+
 }

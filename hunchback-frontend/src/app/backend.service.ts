@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {
   Inject,
   Injectable
@@ -10,6 +10,9 @@ import { Observable } from 'rxjs/Observable';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { Subject } from 'rxjs/Subject';
 import { MessageUnion } from './game-model/message';
+import {ScoreCard} from "./game-model/score-card";
+import {HighScoreList} from "./game-model/high-scores";
+
 
 @Injectable()
 export class BackendService {
@@ -97,5 +100,17 @@ export class BackendService {
   getMap() {
     return this.httpClient.get<any>(`http://${this.backendServer}:${this.port}/map`);
   }
+
+  getHighScores() {
+    return this.httpClient.get<HighScoreList>(`http://${this.backendServer}:${this.port}/scores`);
+
+  }
+
+  addScore(score: ScoreCard) {
+    // have to use GET, since POST doesn't seem to be allowed under Access-Control-Allow-Origin
+    return this.httpClient.get(`http://${this.backendServer}:${this.port}/score/add?userName=${score.userName}&score=${score.score}`)
+  }
+
+
 }
 
