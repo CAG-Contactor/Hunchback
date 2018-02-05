@@ -51,6 +51,7 @@ class DancePadUSBThread (threading.Thread):
                 data = None
                 if e.args == ('Operation timed out',):
                     continue
+            time.sleep(0.05)
         usb.util.release_interface(self.dev, self.interface)
         self.dev.attach_kernel_driver(self.interface)
 
@@ -66,6 +67,7 @@ class DancePadSendThread (threading.Thread):
     def run(self):
         while True:
             self.send_request()
+            time.sleep(0.5)
 
     def send_request(self):
         with self.work_queue_lock:
