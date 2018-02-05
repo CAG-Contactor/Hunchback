@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   position = [0, 0];
   status: string;
   points: number = 0;
-  chart = chartDef;
+  gameOver: boolean;
 
   constructor(private readonly backendService: BackendService) {
   }
@@ -61,11 +61,13 @@ export class AppComponent implements OnInit {
           switch(moags.gameState.state) {
             case 'FINISHED':
               this.message = 'GAME OVER';
+              this.gameOver = true;
               break;
             case 'ARMED':
               this.message = 'READY PLAYER ONE';
               break;
             default:
+              this.gameOver = false;
               this.message = undefined;
           }
         }

@@ -15,7 +15,7 @@ import java.util.Map;
 @Singleton
 @Named("pointsBean")
 public class Points {
-    
+
     private static final String MESSAGE_TYPE = "points";
 
     private GameState stateBean = GameState.getInstance();
