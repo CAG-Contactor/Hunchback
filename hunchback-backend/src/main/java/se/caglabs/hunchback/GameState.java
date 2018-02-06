@@ -26,6 +26,7 @@ public class GameState {
     }
 
     public void resetPointsIndicator(List<PointIndicator> pointIndicators) {
+        this.pointIndicators.clear();
         this.pointIndicators.addAll(pointIndicators);
     }
 
@@ -66,8 +67,8 @@ public class GameState {
     }
 
     void removePointIndicator(PointIndicator pointIndicatorInCollision) {
-        this.pointIndicators.remove(pointIndicatorInCollision);
-        if (state == State.RUNNING) {
+        boolean remove = this.pointIndicators.remove(pointIndicatorInCollision);
+        if (state == State.RUNNING && remove) {
             if (pointIndicatorInCollision.pointIndicatorType.equals("PLUS")) {
                 points += 100;
             } else {
