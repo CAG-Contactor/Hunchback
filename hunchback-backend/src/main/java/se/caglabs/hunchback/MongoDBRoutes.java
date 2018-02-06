@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.net.URLDecoder;
 
 //import com.mongodb.client.FindIterable;
 //import org.bson.Document;
@@ -32,7 +33,7 @@ public class MongoDBRoutes extends RouteBuilder {
         .process((exchange -> {
 //          ObjectMapper mapper = new ObjectMapper();
 //          ScoreCard scoreCard = mapper.readValue(exchange.getIn().getBody(String.class), ScoreCard.class);
-          ScoreCard scoreCard = new ScoreCard(exchange.getIn().getHeader("userName").toString(), exchange.getIn().getHeader("score", Integer.class));
+          ScoreCard scoreCard = new ScoreCard(URLDecoder.decode(exchange.getIn().getHeader("userName").toString(), "utf-8"), exchange.getIn().getHeader("score", Integer.class));
           exchange.getIn().setBody(scoreCard);
         }))
         .bean(gameScoreBean, "addScore");
